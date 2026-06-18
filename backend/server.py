@@ -33,7 +33,9 @@ except Exception:  # pragma: no cover
     TwilioClient = None
 try:
     import razorpay  # type: ignore
-except Exception:  # pragma: no cover
+except Exception as _rz_import_err:  # pragma: no cover
+    logger_import = logging.getLogger("rihm")
+    logger_import.warning(f"[razorpay] SDK import failed: {_rz_import_err}")
     razorpay = None
 import hmac
 import hashlib
@@ -43,6 +45,11 @@ try:
 except Exception:  # pragma: no cover
     certifi = None
 
+try:
+    from pymongo.server_api import ServerApi
+except Exception:  # pragma: no cover
+    ServerApi = None  # type: ignore
+
 # ----------------------------------------------------------------------------
 # Setup
 # ----------------------------------------------------------------------------
@@ -50,22 +57,103 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger("rihm")
 
 
+def _strip_env(value: str) -> str:
+    return value.strip().strip('"').strip("'")
+
+
+def _srv_to_standard_url(srv_url: str) -> str:
+    """Convert mongodb+srv:// to mongodb:// — fixes SRV DNS + TLS issues on Vercel Lambda."""
+    import dns.resolver
+
+    without_scheme = srv_url[len("mongodb+srv://") :]
+    creds, rest = (without_scheme.split("@", 1) if "@" in without_scheme else ("", without_scheme))
+    host = rest.split("/")[0].split("?")[0]
+
+    srv_records = dns.resolver.resolve(f"_mongodb._tcp.{host}", "SRV")
+    nodes = ",".join(
+        f"{r.target.to_text(omit_final_dot=True).rstrip('.')}:{r.port}"
+        for r in sorted(srv_records, key=lambda x: (x.priority, -x.weight))
+    )
+
+    path = ""
+    if "/" in rest:
+        path_part = rest.split("/", 1)[1]
+        db_path = path_part.split("?")[0]
+        if db_path:
+            path = f"/{db_path}"
+
+    params: list[str] = []
+    if "?" in rest:
+        params.extend(rest.split("?", 1)[1].split("&"))
+
+    try:
+        for txt in dns.resolver.resolve(host, "TXT"):
+            for raw in txt.strings:
+                params.append(raw.decode() if isinstance(raw, bytes) else raw)
+    except Exception:
+        pass
+
+    param_map: dict[str, str] = {}
+    for p in params:
+        if "=" in p:
+            k, v = p.split("=", 1)
+            param_map[k] = v
+
+    param_map.setdefault("ssl", "true")
+    param_map.setdefault("authSource", "admin")
+    query = "&".join(f"{k}={v}" for k, v in param_map.items())
+
+    creds_prefix = f"{creds}@" if creds else ""
+    return f"mongodb://{creds_prefix}{nodes}{path}?{query}"
+
+
+def _prepare_mongo_url(url: str) -> str:
+    """On Vercel, resolve SRV to a standard URI (serverless DNS often breaks mongodb+srv)."""
+    if not url.startswith("mongodb+srv://"):
+        return url
+    if not os.environ.get("VERCEL"):
+        return url
+    try:
+        standard = _srv_to_standard_url(url)
+        logger.info("[mongo] Resolved SRV → standard URI for Vercel")
+        return standard
+    except Exception as e:
+        logger.warning(f"[mongo] SRV resolve failed ({e}); keeping mongodb+srv URL")
+        return url
+
+
 def _mongo_client(url: str) -> AsyncIOMotorClient:
     """Atlas TLS on Vercel/AWS Lambda needs certifi + OCSP check disabled."""
+    prepared = _prepare_mongo_url(url)
     kwargs: dict = {
-        "serverSelectionTimeoutMS": 10000,
-        "connectTimeoutMS": 10000,
+        "serverSelectionTimeoutMS": 15000,
+        "connectTimeoutMS": 15000,
+        "socketTimeoutMS": 15000,
+        "retryWrites": True,
         # Required on Vercel/Lambda — fixes TLSV1_ALERT_INTERNAL_ERROR with Atlas
         "tlsDisableOCSPEndpointCheck": True,
     }
     if certifi is not None:
         kwargs["tlsCAFile"] = certifi.where()
-    return AsyncIOMotorClient(url, **kwargs)
+    if ServerApi is not None:
+        kwargs["server_api"] = ServerApi("1")
+    return AsyncIOMotorClient(prepared, **kwargs)
+
+
+def _mongo_host_hint(url: str) -> str:
+    """Hostname only — safe to expose in /api/health (no credentials)."""
+    try:
+        rest = url.split("://", 1)[1]
+        if "@" in rest:
+            rest = rest.split("@", 1)[1]
+        return rest.split("/")[0].split("?")[0].split(",")[0]
+    except Exception:
+        return "unknown"
 
 
 # Strip accidental quotes from Vercel env paste
-mongo_url = os.environ.get("MONGO_URL", "").strip().strip('"').strip("'")
-db_name = os.environ.get("DB_NAME", "").strip().strip('"').strip("'")
+mongo_url = _strip_env(os.environ.get("MONGO_URL", ""))
+db_name = _strip_env(os.environ.get("DB_NAME", ""))
 if not mongo_url or not db_name:
     logger.error("MONGO_URL and DB_NAME must be set in environment variables")
 client = _mongo_client(mongo_url) if mongo_url else None
@@ -1262,6 +1350,31 @@ async def root():
             detail="Database not configured. Set MONGO_URL and DB_NAME in Vercel environment variables.",
         )
     return {"service": "RIHM API", "status": "ok"}
+
+
+@api.get("/health")
+async def health():
+    """Diagnostics for production — confirms MongoDB connectivity."""
+    info: dict = {
+        "service": "RIHM API",
+        "vercel": bool(os.environ.get("VERCEL")),
+        "db_configured": db is not None,
+        "db_name": db_name or None,
+        "mongo_host": _mongo_host_hint(mongo_url) if mongo_url else None,
+        "mongo_uri_mode": "srv" if mongo_url.startswith("mongodb+srv://") else "standard",
+    }
+    if db is None:
+        info["mongo"] = "not_configured"
+        return info
+    try:
+        await client.admin.command("ping")
+        course_count = await db.courses.count_documents({})
+        info["mongo"] = "ok"
+        info["courses"] = course_count
+    except Exception as e:
+        info["mongo"] = "error"
+        info["error"] = str(e)[:300]
+    return info
 
 
 # ----------------------------------------------------------------------------

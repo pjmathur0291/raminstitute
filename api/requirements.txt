@@ -9,6 +9,7 @@ PyJWT==2.13.0
 python-dotenv==1.2.2
 python-multipart==0.0.30
 email-validator==2.3.0
+setuptools<81
 razorpay==1.4.2
 twilio==9.10.9
 resend==2.30.1

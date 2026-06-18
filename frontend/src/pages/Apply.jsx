@@ -253,6 +253,7 @@ export default function ApplyPage() {
                 <span className="flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> 256-bit SSL</span>
                 <span className="flex items-center gap-1"><Lock className="w-3.5 h-3.5 text-emerald-600" /> Razorpay Secured</span>
                 {!config.configured && <span className="text-amber-600 font-semibold">DEV MODE</span>}
+                {config.configured && config.test_mode && <span className="text-blue-600 font-semibold">TEST MODE</span>}
               </div>
               <p className="text-[10px] text-center text-gray-400 leading-relaxed">
                 By proceeding, I authorise Shri Ram Institute Dehradun &amp; its representatives to contact me via email, SMS, WhatsApp and call regarding my application. This will override DND/NDNC registry.
