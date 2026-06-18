@@ -44,9 +44,12 @@ import hashlib
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("rihm")
 
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+mongo_url = os.environ.get('MONGO_URL', '').strip()
+db_name = os.environ.get('DB_NAME', '').strip()
+if not mongo_url or not db_name:
+    logger.error('MONGO_URL and DB_NAME must be set in environment variables')
+client = AsyncIOMotorClient(mongo_url) if mongo_url else None
+db = client[db_name] if client and db_name else None
 
 JWT_SECRET = os.environ.get('JWT_SECRET', 'change-me')
 JWT_ALGORITHM = "HS256"
@@ -708,6 +711,9 @@ DEFAULT_BLOG_POSTS = [
 
 @app.on_event("startup")
 async def startup_event():
+    if db is None:
+        logger.error("[startup] skipped — MONGO_URL or DB_NAME not set")
+        return
     # Indexes
     await db.users.create_index("email", unique=True)
     await db.users.create_index("id", unique=True)
@@ -1222,6 +1228,11 @@ async def get_settings():
 
 @api.get("/")
 async def root():
+    if db is None:
+        raise HTTPException(
+            status_code=503,
+            detail="Database not configured. Set MONGO_URL and DB_NAME in Vercel environment variables.",
+        )
     return {"service": "RIHM API", "status": "ok"}
 
 
@@ -1302,4 +1313,5 @@ app.add_middleware(
 
 @app.on_event("shutdown")
 async def shutdown():
-    client.close()
+    if client:
+        client.close()
