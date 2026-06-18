@@ -22,10 +22,4 @@ const tree = (
   </React.StrictMode>
 );
 
-// If react-snap (or any prerenderer) has injected static HTML into #root,
-// hydrate the existing DOM instead of replacing it.
-if (rootEl.hasChildNodes()) {
-  ReactDOM.hydrateRoot(rootEl, tree);
-} else {
-  ReactDOM.createRoot(rootEl).render(tree);
-}
+ReactDOM.createRoot(rootEl).render(tree);

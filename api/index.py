@@ -1,0 +1,10 @@
+"""
+Vercel Python entrypoint — exports FastAPI app from backend/server.py.
+Vercel auto-detects api/index.py and routes /api/* here.
+"""
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "backend"))
+
+from server import app  # noqa: F401
