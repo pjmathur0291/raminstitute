@@ -10,7 +10,7 @@
   "functions": {
     "api/**/*.py": {
       "maxDuration": 30,
-      "excludeFiles": "{frontend/**,backend/tests/**,**/*.test.py,**/test_*.py}"
+      "excludeFiles": "{frontend/**,backend/tests/**,backend/venv/**,backend/memory/**,**/*.test.py,**/test_*.py}"
     }
   }
 }

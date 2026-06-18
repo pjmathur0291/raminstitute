@@ -764,26 +764,30 @@ async def startup_event():
             })
         logger.info(f"[seed] {len(DEFAULT_BLOG_POSTS)} silo blog posts inserted")
 
-    # Write test credentials file
-    creds_path = Path("/app/memory/test_credentials.md")
-    creds_path.parent.mkdir(parents=True, exist_ok=True)
-    creds_path.write_text(
-        f"# RIHM Test Credentials\n\n"
-        f"## Admin (CMS Dashboard)\n"
-        f"- Email: `{ADMIN_EMAIL}`\n"
-        f"- Password: `{ADMIN_PASSWORD}`\n"
-        f"- Role: admin\n\n"
-        f"## Auth Endpoints\n"
-        f"- POST `/api/auth/login` body `{{email, password}}` returns `{{access_token, user}}`\n"
-        f"- GET `/api/auth/me` requires `Authorization: Bearer <token>`\n"
-        f"- Frontend admin login route: `/admin/login`\n"
-        f"- Frontend admin dashboard: `/admin`\n\n"
-        f"## Public Endpoints\n"
-        f"- POST `/api/leads` - submit a lead (no auth)\n"
-        f"- GET `/api/courses` - list active courses (no auth)\n"
-        f"- GET `/api/courses/{{slug}}` - course detail (no auth)\n"
-        f"- GET `/api/blog/posts` - published blog posts (no auth)\n"
-    )
+    # Write test credentials file (local dev only — skip on Vercel/serverless)
+    if not os.environ.get("VERCEL"):
+        creds_path = ROOT_DIR / "memory" / "test_credentials.md"
+        try:
+            creds_path.parent.mkdir(parents=True, exist_ok=True)
+            creds_path.write_text(
+                f"# RIHM Test Credentials\n\n"
+                f"## Admin (CMS Dashboard)\n"
+                f"- Email: `{ADMIN_EMAIL}`\n"
+                f"- Password: `{ADMIN_PASSWORD}`\n"
+                f"- Role: admin\n\n"
+                f"## Auth Endpoints\n"
+                f"- POST `/api/auth/login` body `{{email, password}}` returns `{{access_token, user}}`\n"
+                f"- GET `/api/auth/me` requires `Authorization: Bearer <token>`\n"
+                f"- Frontend admin login route: `/admin/login`\n"
+                f"- Frontend admin dashboard: `/admin`\n\n"
+                f"## Public Endpoints\n"
+                f"- POST `/api/leads` - submit a lead (no auth)\n"
+                f"- GET `/api/courses` - list active courses (no auth)\n"
+                f"- GET `/api/courses/{{slug}}` - course detail (no auth)\n"
+                f"- GET `/api/blog/posts` - published blog posts (no auth)\n"
+            )
+        except OSError as e:
+            logger.warning(f"[seed] could not write credentials file: {e}")
 
 
 # ----------------------------------------------------------------------------

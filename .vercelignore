@@ -1,5 +1,7 @@
 frontend/node_modules
+backend/venv
 backend/tests
+backend/memory
 **/__pycache__
 **/*.pyc
 .env
