@@ -51,8 +51,13 @@ logger = logging.getLogger("rihm")
 
 
 def _mongo_client(url: str) -> AsyncIOMotorClient:
-    """Atlas TLS on Vercel/Lambda needs certifi CA bundle."""
-    kwargs: dict = {"serverSelectionTimeoutMS": 15000}
+    """Atlas TLS on Vercel/AWS Lambda needs certifi + OCSP check disabled."""
+    kwargs: dict = {
+        "serverSelectionTimeoutMS": 10000,
+        "connectTimeoutMS": 10000,
+        # Required on Vercel/Lambda — fixes TLSV1_ALERT_INTERNAL_ERROR with Atlas
+        "tlsDisableOCSPEndpointCheck": True,
+    }
     if certifi is not None:
         kwargs["tlsCAFile"] = certifi.where()
     return AsyncIOMotorClient(url, **kwargs)
@@ -729,61 +734,69 @@ async def startup_event():
     if db is None:
         logger.error("[startup] skipped — MONGO_URL or DB_NAME not set")
         return
-    # Indexes
-    await db.users.create_index("email", unique=True)
-    await db.users.create_index("id", unique=True)
-    await db.leads.create_index("created_at")
-    await db.courses.create_index("slug", unique=True)
-    await db.blog_posts.create_index("slug", unique=True)
-    await db.applications.create_index("id", unique=True)
-    await db.applications.create_index("application_no", unique=True)
-    await db.applications.create_index("razorpay_order_id")
+    try:
+        await client.admin.command("ping")
+        logger.info("[startup] MongoDB ping OK")
+    except Exception as e:
+        logger.error(f"[startup] MongoDB ping failed: {e}")
+        return
+    try:
+        # Indexes
+        await db.users.create_index("email", unique=True)
+        await db.users.create_index("id", unique=True)
+        await db.leads.create_index("created_at")
+        await db.courses.create_index("slug", unique=True)
+        await db.blog_posts.create_index("slug", unique=True)
+        await db.applications.create_index("id", unique=True)
+        await db.applications.create_index("application_no", unique=True)
+        await db.applications.create_index("razorpay_order_id")
 
-    # Seed admin
-    existing = await db.users.find_one({"email": ADMIN_EMAIL})
-    if not existing:
-        await db.users.insert_one({
-            "id": str(uuid.uuid4()),
-            "email": ADMIN_EMAIL,
-            "password_hash": hash_password(ADMIN_PASSWORD),
-            "name": ADMIN_NAME,
-            "role": "admin",
-            "created_at": iso_now(),
-        })
-        logger.info(f"[seed] admin user created: {ADMIN_EMAIL}")
-    elif not verify_password(ADMIN_PASSWORD, existing.get("password_hash", "")):
-        await db.users.update_one(
-            {"email": ADMIN_EMAIL},
-            {"$set": {"password_hash": hash_password(ADMIN_PASSWORD)}},
-        )
-        logger.info(f"[seed] admin password updated: {ADMIN_EMAIL}")
-
-    # Seed/update default courses (always upsert hero_image so existing rows get new student photos)
-    for c in DEFAULT_COURSES:
-        exists = await db.courses.find_one({"slug": c["slug"]})
-        if not exists:
-            doc = {**c, "id": str(uuid.uuid4()), "is_active": True, "created_at": iso_now()}
-            await db.courses.insert_one(doc)
-        else:
-            # Always refresh the hero_image so updates in DEFAULT_COURSES propagate
-            await db.courses.update_one(
-                {"slug": c["slug"]},
-                {"$set": {"hero_image": c["hero_image"], "icon": c.get("icon")}},
-            )
-    logger.info("[seed] courses ensured")
-
-    # Seed silo blog posts (only if collection empty — admin can add/edit afterwards)
-    blog_count = await db.blog_posts.count_documents({})
-    if blog_count == 0:
-        for post in DEFAULT_BLOG_POSTS:
-            await db.blog_posts.insert_one({
-                **post,
+        # Seed admin
+        existing = await db.users.find_one({"email": ADMIN_EMAIL})
+        if not existing:
+            await db.users.insert_one({
                 "id": str(uuid.uuid4()),
-                "author": "RIHM Editorial",
-                "published": True,
+                "email": ADMIN_EMAIL,
+                "password_hash": hash_password(ADMIN_PASSWORD),
+                "name": ADMIN_NAME,
+                "role": "admin",
                 "created_at": iso_now(),
             })
-        logger.info(f"[seed] {len(DEFAULT_BLOG_POSTS)} silo blog posts inserted")
+            logger.info(f"[seed] admin user created: {ADMIN_EMAIL}")
+        elif not verify_password(ADMIN_PASSWORD, existing.get("password_hash", "")):
+            await db.users.update_one(
+                {"email": ADMIN_EMAIL},
+                {"$set": {"password_hash": hash_password(ADMIN_PASSWORD)}},
+            )
+            logger.info(f"[seed] admin password updated: {ADMIN_EMAIL}")
+
+        # Seed/update default courses (always upsert hero_image so existing rows get new student photos)
+        for c in DEFAULT_COURSES:
+            exists = await db.courses.find_one({"slug": c["slug"]})
+            if not exists:
+                doc = {**c, "id": str(uuid.uuid4()), "is_active": True, "created_at": iso_now()}
+                await db.courses.insert_one(doc)
+            else:
+                await db.courses.update_one(
+                    {"slug": c["slug"]},
+                    {"$set": {"hero_image": c["hero_image"], "icon": c.get("icon")}},
+                )
+        logger.info("[seed] courses ensured")
+
+        # Seed silo blog posts (only if collection empty — admin can add/edit afterwards)
+        blog_count = await db.blog_posts.count_documents({})
+        if blog_count == 0:
+            for post in DEFAULT_BLOG_POSTS:
+                await db.blog_posts.insert_one({
+                    **post,
+                    "id": str(uuid.uuid4()),
+                    "author": "RIHM Editorial",
+                    "published": True,
+                    "created_at": iso_now(),
+                })
+            logger.info(f"[seed] {len(DEFAULT_BLOG_POSTS)} silo blog posts inserted")
+    except Exception as e:
+        logger.error(f"[startup] seed/index failed: {e}")
 
     # Write test credentials file (local dev only — skip on Vercel/serverless)
     if not os.environ.get("VERCEL"):
