@@ -2,7 +2,12 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "cd frontend && yarn build",
   "outputDirectory": "frontend/build",
-  "installCommand": "pip install -r api/requirements.txt && cd frontend && yarn install",
+  "installCommand": "pip install -r requirements.txt && cd frontend && yarn install",
+  "build": {
+    "env": {
+      "SKIP_PRERENDER": "1"
+    }
+  },
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api" },
     { "source": "/(.*)", "destination": "/index.html" }

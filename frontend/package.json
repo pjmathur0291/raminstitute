@@ -63,7 +63,7 @@
   "scripts": {
     "start": "craco start",
     "build": "craco build",
-    "postbuild": "react-snap || echo '[prerender] react-snap failed, attempting fallback' && node ./scripts/prerender.js || echo '[prerender] skipped — production build still valid'",
+    "postbuild": "node ./scripts/postbuild.js",
     "prerender": "node ./scripts/prerender.js",
     "test": "craco test"
   },
