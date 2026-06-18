@@ -38,17 +38,32 @@ except Exception:  # pragma: no cover
 import hmac
 import hashlib
 
+try:
+    import certifi
+except Exception:  # pragma: no cover
+    certifi = None
+
 # ----------------------------------------------------------------------------
 # Setup
 # ----------------------------------------------------------------------------
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("rihm")
 
-mongo_url = os.environ.get('MONGO_URL', '').strip()
-db_name = os.environ.get('DB_NAME', '').strip()
+
+def _mongo_client(url: str) -> AsyncIOMotorClient:
+    """Atlas TLS on Vercel/Lambda needs certifi CA bundle."""
+    kwargs: dict = {"serverSelectionTimeoutMS": 15000}
+    if certifi is not None:
+        kwargs["tlsCAFile"] = certifi.where()
+    return AsyncIOMotorClient(url, **kwargs)
+
+
+# Strip accidental quotes from Vercel env paste
+mongo_url = os.environ.get("MONGO_URL", "").strip().strip('"').strip("'")
+db_name = os.environ.get("DB_NAME", "").strip().strip('"').strip("'")
 if not mongo_url or not db_name:
-    logger.error('MONGO_URL and DB_NAME must be set in environment variables')
-client = AsyncIOMotorClient(mongo_url) if mongo_url else None
+    logger.error("MONGO_URL and DB_NAME must be set in environment variables")
+client = _mongo_client(mongo_url) if mongo_url else None
 db = client[db_name] if client and db_name else None
 
 JWT_SECRET = os.environ.get('JWT_SECRET', 'change-me')
