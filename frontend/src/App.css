@@ -1,0 +1,2 @@
+/* App-level styles intentionally minimal; layout via Tailwind utilities */
+.App { min-height: 100vh; }
