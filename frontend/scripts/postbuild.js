@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 /**
- * Skip react-snap / puppeteer prerender on Vercel and CI.
- * Puppeteer cannot launch Chrome in Vercel's build environment.
+ * Post-build: copy static landing pages, then optionally prerender the React SPA.
  */
+const { execSync } = require("child_process");
+
+require("./copy-static-pages");
+
 if (process.env.VERCEL || process.env.CI || process.env.SKIP_PRERENDER === "1") {
   console.log("[prerender] skipped on Vercel/CI");
   process.exit(0);
 }
-
-const { execSync } = require("child_process");
 
 try {
   execSync("npx react-snap", { stdio: "inherit" });

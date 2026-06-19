@@ -11,6 +11,9 @@
 # production
 /build
 
+# synced from repo-root static landing pages (see scripts/copy-static-pages.js)
+/public/nursing
+
 # misc
 .DS_Store
 .env

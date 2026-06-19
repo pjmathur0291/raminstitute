@@ -1,0 +1,201 @@
+@media screen and (min-width: 200px) and (max-width: 768px) {
+  .blog-layout-section {
+    padding:40px 10px;
+  }
+  
+  .blog-layout-main-heading {
+    font-size: 28px;
+    line-height: 38px;
+    text-align:left;
+  }
+  .blog-card-layout-title {
+    font-size: 18px;
+    line-height: 26px;
+    width:100%;
+  }
+
+  
+    .footer-main-layout {
+        padding: 40px 0px 10px 10px;
+    }
+    .footer-main-layout-logo-content img{
+      width: 50%!important;
+    }
+   
+    .footer-main-layout-logo-paragraph {
+      width: 100%;
+      font-size: 14px;
+    }
+    .footer-main-layout-heading-flex {
+      flex-direction: column;
+      margin-bottom: 20px;
+    }
+    .footer-main-cta {
+      font-size:12px;
+      padding: 9px 15px;
+    }
+    .footer-main-copyright {
+      padding: 10px;
+    }
+    .faq-section-layout {
+      padding: 40px 10px;
+    }
+    .faq-section-mainheading {
+      font-size: 26px;
+      line-height: 36px;
+    }
+    .faq-main-layouts .accordion-item{
+      padding: 15px 10px;
+      border-radius: 10px!important;
+    }
+    .faq-icon {
+      display: none;
+    }
+    .accordion-body {
+      padding: 15px 0px!important;
+      font-size: 15px;
+      line-height: 25px;
+
+    }
+    .accordion-button {
+      font-size: 15px;
+      line-height: 26px;
+      text-align: left;
+    }
+    .faq-toggle {
+      width: 26px;
+      height: 26px;
+    }
+    .apply-now-layout {
+      padding: 40px 10px;
+    }
+    .apply-now-layout-container {
+        padding: 30px 15px;
+        border-radius: 10px;
+    }
+    .btn-apply-now {
+      margin-top: 20px;
+      padding: 14px 20px;
+      width: 100%;
+      font-size: 14px;
+    }
+    .admission-process-layout {
+      padding: 40px 10px;
+    }
+    .admission-card {
+      gap: 0px;
+    }
+    .step-label {
+      padding-top: 10px !important;
+      padding-bottom: 0px!important;
+      margin-bottom: 0px!important;
+    }
+    .career-pathways-layout {
+      padding: 40px 10px;
+    }
+    .career-pathways-cards-heading { 
+      font-size: 26px;
+    }
+ 
+    .program-overview-layout {
+      padding: 10px 10px;
+    }
+    .program-overview-cardmain {
+      padding: 15px;
+    }
+    .program-overview-cardmain-value  {
+      font-size: 16px;
+      line-height: 28px;
+    }
+    .focus-areas-card {
+      padding: 30px 10px;
+      border-radius: 10px;
+    }
+    .focus-areas-card-tag { 
+      font-size: 14px;
+      line-height: 24px;
+      border-radius:5px;
+      padding: 10px;
+    }
+ 
+  .why-choose-layout{
+    padding: 40px 10px;
+  }
+  .why-choose-layout-images img { 
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+  }
+ .why-choose-contant-layout-tag {
+   font-size: 14px;
+      line-height: 24px;
+      border-radius:5px;
+      padding: 10px;
+ }
+ .about-shri-ram-layout {
+  padding: 40px 10px;
+ }
+ .faq-section-mainsubheading  {
+  text-align: left;
+ }
+ .about-shri-ram-card {
+  padding: 30px 15px;
+  border-radius: 15px;
+ }
+ .about-shri-ram-card-title {
+  font-size: 18px;
+  line-height: 28px;
+ } 
+ .about-shri-ram-card-desc {
+  font-size: 15px;
+ }
+ .hero-section-layout {
+  padding: 50px 10px;
+  background-position: right;
+ }
+ .hero-section-layout-title {
+  font-size: 28px;
+  line-height: 38px;
+ }
+ .hero-section-layout-discription{
+  font-weight: 600;
+ }
+ .cf-rating {
+  display: none;
+ }
+ .btn-apply-now-hero {
+   margin-top: 20px;
+      padding: 14px 10px;
+      width: 100%;
+      font-size: 13px;
+      letter-spacing: 0.2px;
+      background-color: #B33A3B;
+      color: #fff;
+ }
+ .cf-header-sub {
+  width: 100%;
+ }
+ .header-nav-link  {
+  text-align: left;
+ }
+
+ .hearder-layout-top {
+  padding: 15px;
+ }
+ .hearder-layout-contants {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    gap: 10px;
+}
+.hearder-layout-contants p {
+  text-align: left;
+  font-size: 14px;
+  line-height: 26px;
+}
+}
+
+
+
+

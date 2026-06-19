@@ -10,6 +10,7 @@
   },
   "rewrites": [
     { "source": "/api/:path*", "destination": "/api" },
+    { "source": "/nursing", "destination": "/nursing/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
