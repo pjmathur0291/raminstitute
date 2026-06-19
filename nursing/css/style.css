@@ -657,7 +657,7 @@ a {
 .po-focus-icon {
   width: 20px;
   height: 20px;
-  background: url('images/focus-icon.svg') center/contain no-repeat;
+  background: url('../images/icon.svg') center/contain no-repeat;
   display: inline-block;
 }
 
