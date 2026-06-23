@@ -13,6 +13,7 @@ import os
 import logging
 import uuid
 import asyncio
+import re
 import bcrypt
 import jwt
 from datetime import datetime, timezone, timedelta
@@ -300,12 +301,21 @@ def _split_name(full_name: str) -> tuple[str, str]:
     return (parts[0], parts[1])
 
 
+def _crm_phone(phone: str) -> str:
+    digits = "".join(c for c in (phone or "") if c.isdigit())
+    if len(digits) == 10:
+        return f"91{digits}"
+    return digits or phone
+
+
 def _lead_crm_payload(lead: dict) -> dict:
     first, last = _split_name(lead.get("name", ""))
+    phone = _crm_phone(lead.get("phone", ""))
     payload = {
         "FirstName": first,
         "LastName": last,
-        "MobileNumber": lead.get("phone", ""),
+        "Name": lead.get("name", ""),
+        "MobileNumber": phone,
         "Email": lead.get("email") or "",
         "Course": lead.get("course") or "",
         "Source": (lead.get("source") or os.environ.get("EXTRAEEDGE_SOURCE") or "website").strip(),
@@ -1030,7 +1040,7 @@ def _lead_whatsapp(lead: dict) -> str:
     )
 
 
-def _schedule_lead_notifications(
+async def _schedule_lead_notifications(
     lead: dict,
     *,
     email: bool = True,
@@ -1038,14 +1048,21 @@ def _schedule_lead_notifications(
     crm: bool = True,
     email_subject: Optional[str] = None,
 ) -> None:
-    """Fan out lead to email, WhatsApp, and ExtraaEdge CRM (each can be toggled)."""
+    """Fan out lead to email, WhatsApp, and ExtraaEdge CRM (awaited for serverless reliability)."""
+    tasks = []
     if email:
         subject = email_subject or f"[RIHM Lead] {lead.get('name', '')} • {lead.get('course') or 'General Enquiry'}"
-        asyncio.create_task(send_email_notification(subject=subject, html=_lead_html(lead)))
+        tasks.append(send_email_notification(subject=subject, html=_lead_html(lead)))
     if whatsapp:
-        asyncio.create_task(send_whatsapp_notification(_lead_whatsapp(lead)))
+        tasks.append(send_whatsapp_notification(_lead_whatsapp(lead)))
     if crm:
-        asyncio.create_task(send_crm_webhook(lead))
+        tasks.append(send_crm_webhook(lead))
+    if not tasks:
+        return
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+    for result in results:
+        if isinstance(result, Exception):
+            logger.warning(f"[lead-notify] task failed: {result}")
 
 
 @api.post("/leads", response_model=LeadOut)
@@ -1058,7 +1075,7 @@ async def create_lead(lead: LeadCreate):
         "created_at": iso_now(),
     }
     await db.leads.insert_one(doc.copy())
-    _schedule_lead_notifications(doc)
+    await _schedule_lead_notifications(doc)
     doc.pop("_id", None)
     return LeadOut(**doc)
 
@@ -1286,7 +1303,7 @@ async def create_application_order(payload: ApplicationCreate):
         "created_at": iso_now(),
     }
     await db.leads.insert_one(app_lead.copy())
-    _schedule_lead_notifications(app_lead, email=False, whatsapp=False)
+    await _schedule_lead_notifications(app_lead, email=False, whatsapp=False)
 
     return CreateOrderOut(
         application_id=application_id,
@@ -1346,35 +1363,38 @@ async def verify_payment(payload: VerifyPaymentIn):
       </table>
     </div>
     """
-    asyncio.create_task(send_email_notification(
-        subject=f"[RIHM Application Paid] {updated['application_no']} • {updated.get('course','')}",
-        html=notification_html,
-    ))
-    asyncio.create_task(send_whatsapp_notification(
-        f"💰 PAID APPLICATION\n"
-        f"No: {updated['application_no']}\n"
-        f"Name: {updated.get('name','')}\n"
-        f"Father: {updated.get('father_name','')}\n"
-        f"Phone: {updated.get('phone','')}\n"
-        f"Course: {updated.get('course','')}\n"
-        f"₹{updated.get('amount_inr','')} • {updated.get('razorpay_payment_id','')}"
-    ))
-    _schedule_lead_notifications(
-        {
-            "name": updated.get("name", ""),
-            "phone": updated.get("phone", ""),
-            "email": updated.get("email"),
-            "course": updated.get("course"),
-            "source": "application_paid",
-            "message": (
-                f"Paid application {updated['application_no']}. "
-                f"Father: {updated.get('father_name', '')}. "
-                f"Amount: ₹{updated.get('amount_inr', '')}. "
-                f"Payment ID: {updated.get('razorpay_payment_id', '')}"
-            ),
-        },
-        email=False,
-        whatsapp=False,
+    await asyncio.gather(
+        send_email_notification(
+            subject=f"[RIHM Application Paid] {updated['application_no']} • {updated.get('course','')}",
+            html=notification_html,
+        ),
+        send_whatsapp_notification(
+            f"💰 PAID APPLICATION\n"
+            f"No: {updated['application_no']}\n"
+            f"Name: {updated.get('name','')}\n"
+            f"Father: {updated.get('father_name','')}\n"
+            f"Phone: {updated.get('phone','')}\n"
+            f"Course: {updated.get('course','')}\n"
+            f"₹{updated.get('amount_inr','')} • {updated.get('razorpay_payment_id','')}"
+        ),
+        _schedule_lead_notifications(
+            {
+                "name": updated.get("name", ""),
+                "phone": updated.get("phone", ""),
+                "email": updated.get("email"),
+                "course": updated.get("course"),
+                "source": "application_paid",
+                "message": (
+                    f"Paid application {updated['application_no']}. "
+                    f"Father: {updated.get('father_name', '')}. "
+                    f"Amount: ₹{updated.get('amount_inr', '')}. "
+                    f"Payment ID: {updated.get('razorpay_payment_id', '')}"
+                ),
+            },
+            email=False,
+            whatsapp=False,
+        ),
+        return_exceptions=True,
     )
 
     # Update related lead
