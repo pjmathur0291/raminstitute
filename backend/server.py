@@ -308,8 +308,7 @@ def _lead_crm_payload(lead: dict) -> dict:
         "MobileNumber": lead.get("phone", ""),
         "Email": lead.get("email") or "",
         "Course": lead.get("course") or "",
-        "Center": os.environ.get("EXTRAEEDGE_CENTER", "Dehradun").strip() or "Dehradun",
-        "Source": (os.environ.get("EXTRAEEDGE_SOURCE") or lead.get("source") or "website").strip(),
+        "Source": (lead.get("source") or os.environ.get("EXTRAEEDGE_SOURCE") or "website").strip(),
     }
     if lead.get("city"):
         payload["City"] = lead["city"]
@@ -1031,6 +1030,24 @@ def _lead_whatsapp(lead: dict) -> str:
     )
 
 
+def _schedule_lead_notifications(
+    lead: dict,
+    *,
+    email: bool = True,
+    whatsapp: bool = True,
+    crm: bool = True,
+    email_subject: Optional[str] = None,
+) -> None:
+    """Fan out lead to email, WhatsApp, and ExtraaEdge CRM (each can be toggled)."""
+    if email:
+        subject = email_subject or f"[RIHM Lead] {lead.get('name', '')} • {lead.get('course') or 'General Enquiry'}"
+        asyncio.create_task(send_email_notification(subject=subject, html=_lead_html(lead)))
+    if whatsapp:
+        asyncio.create_task(send_whatsapp_notification(_lead_whatsapp(lead)))
+    if crm:
+        asyncio.create_task(send_crm_webhook(lead))
+
+
 @api.post("/leads", response_model=LeadOut)
 async def create_lead(lead: LeadCreate):
     doc = {
@@ -1041,13 +1058,7 @@ async def create_lead(lead: LeadCreate):
         "created_at": iso_now(),
     }
     await db.leads.insert_one(doc.copy())
-    # Fire and forget notifications
-    asyncio.create_task(send_email_notification(
-        subject=f"[RIHM Lead] {doc['name']} • {doc.get('course') or 'General Enquiry'}",
-        html=_lead_html(doc),
-    ))
-    asyncio.create_task(send_whatsapp_notification(_lead_whatsapp(doc)))
-    asyncio.create_task(send_crm_webhook(doc))
+    _schedule_lead_notifications(doc)
     doc.pop("_id", None)
     return LeadOut(**doc)
 
@@ -1275,7 +1286,7 @@ async def create_application_order(payload: ApplicationCreate):
         "created_at": iso_now(),
     }
     await db.leads.insert_one(app_lead.copy())
-    asyncio.create_task(send_crm_webhook(app_lead))
+    _schedule_lead_notifications(app_lead, email=False, whatsapp=False)
 
     return CreateOrderOut(
         application_id=application_id,
@@ -1348,6 +1359,23 @@ async def verify_payment(payload: VerifyPaymentIn):
         f"Course: {updated.get('course','')}\n"
         f"₹{updated.get('amount_inr','')} • {updated.get('razorpay_payment_id','')}"
     ))
+    _schedule_lead_notifications(
+        {
+            "name": updated.get("name", ""),
+            "phone": updated.get("phone", ""),
+            "email": updated.get("email"),
+            "course": updated.get("course"),
+            "source": "application_paid",
+            "message": (
+                f"Paid application {updated['application_no']}. "
+                f"Father: {updated.get('father_name', '')}. "
+                f"Amount: ₹{updated.get('amount_inr', '')}. "
+                f"Payment ID: {updated.get('razorpay_payment_id', '')}"
+            ),
+        },
+        email=False,
+        whatsapp=False,
+    )
 
     # Update related lead
     await db.leads.update_many(
