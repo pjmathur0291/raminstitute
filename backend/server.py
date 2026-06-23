@@ -291,6 +291,66 @@ async def send_email_notification(subject: str, html: str) -> None:
     logger.info("[email] skipped - no SMTP or Resend keys configured")
 
 
+def _split_name(full_name: str) -> tuple[str, str]:
+    parts = (full_name or "").strip().split(None, 1)
+    if not parts:
+        return ("", "")
+    if len(parts) == 1:
+        return (parts[0], ".")
+    return (parts[0], parts[1])
+
+
+def _lead_crm_payload(lead: dict) -> dict:
+    first, last = _split_name(lead.get("name", ""))
+    payload = {
+        "FirstName": first,
+        "LastName": last,
+        "MobileNumber": lead.get("phone", ""),
+        "Email": lead.get("email") or "",
+        "Course": lead.get("course") or "",
+        "Center": os.environ.get("EXTRAEEDGE_CENTER", "Dehradun").strip() or "Dehradun",
+        "Source": (os.environ.get("EXTRAEEDGE_SOURCE") or lead.get("source") or "website").strip(),
+    }
+    if lead.get("city"):
+        payload["City"] = lead["city"]
+    if lead.get("message"):
+        payload["Remarks"] = lead["message"]
+    return payload
+
+
+async def send_crm_webhook(lead: dict) -> None:
+    """Forward lead to ExtraaEdge CRM integration webhook."""
+    url = os.environ.get("EXTRAEEDGE_WEBHOOK_URL", "").strip()
+    if not url:
+        logger.info("[crm] skipped - no EXTRAEEDGE_WEBHOOK_URL configured")
+        return
+
+    import json
+    from urllib import error, request
+
+    payload = _lead_crm_payload(lead)
+
+    def _post() -> str:
+        data = json.dumps(payload).encode("utf-8")
+        req = request.Request(
+            url,
+            data=data,
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        with request.urlopen(req, timeout=15) as resp:
+            return resp.read().decode()
+
+    try:
+        body = await asyncio.to_thread(_post)
+        logger.info(f"[crm] sent lead {lead.get('phone', '')} — {body[:200]}")
+    except error.HTTPError as e:
+        detail = e.read().decode() if e.fp else str(e)
+        logger.warning(f"[crm] HTTP {e.code}: {detail[:300]}")
+    except Exception as e:
+        logger.warning(f"[crm] failed: {e}")
+
+
 async def send_whatsapp_notification(body: str) -> None:
     sid = os.environ.get("TWILIO_ACCOUNT_SID", "").strip()
     token = os.environ.get("TWILIO_AUTH_TOKEN", "").strip()
@@ -987,6 +1047,7 @@ async def create_lead(lead: LeadCreate):
         html=_lead_html(doc),
     ))
     asyncio.create_task(send_whatsapp_notification(_lead_whatsapp(doc)))
+    asyncio.create_task(send_crm_webhook(doc))
     doc.pop("_id", None)
     return LeadOut(**doc)
 
@@ -1200,7 +1261,7 @@ async def create_application_order(payload: ApplicationCreate):
     await db.applications.insert_one(doc.copy())
 
     # Also create a lead row so this prospect surfaces in the admin lead inbox
-    await db.leads.insert_one({
+    app_lead = {
         "id": str(uuid.uuid4()),
         "name": payload.name,
         "phone": payload.phone,
@@ -1212,7 +1273,9 @@ async def create_application_order(payload: ApplicationCreate):
         "status": "new",
         "notes": None,
         "created_at": iso_now(),
-    })
+    }
+    await db.leads.insert_one(app_lead.copy())
+    asyncio.create_task(send_crm_webhook(app_lead))
 
     return CreateOrderOut(
         application_id=application_id,
