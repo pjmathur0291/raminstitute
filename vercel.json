@@ -3,6 +3,11 @@
   "buildCommand": "cd frontend && yarn build",
   "outputDirectory": "frontend/build",
   "installCommand": "cd frontend && yarn install",
+  "functions": {
+    "api/index.py": {
+      "maxDuration": 30
+    }
+  },
   "build": {
     "env": {
       "SKIP_PRERENDER": "1"

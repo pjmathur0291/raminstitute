@@ -292,6 +292,38 @@ async def send_email_notification(subject: str, html: str) -> None:
     logger.info("[email] skipped - no SMTP or Resend keys configured")
 
 
+# ExtraaEdge CRM — integration webhook (env override optional; typo alias supported)
+DEFAULT_EXTRAEEDGE_WEBHOOK_URL = (
+    "https://eeintegration.extraaedge.com/api/integration/Fru3LCCmak2EA8CM"
+)
+
+_COURSE_CRM_NAMES: dict[str, str] = {
+    "bhm": "Bachelor of Hotel Management (BHM)",
+    "mhm": "Master of Hotel Management (MHM)",
+    "dhm": "Diploma in Hotel Management (DHM)",
+    "culinary arts": "Diploma in Culinary Arts",
+    "bakery": "Diploma in Bakery & Confectionery",
+    "bartending": "Diploma in Bartending & Mixology",
+    "b.sc nursing": "B.Sc Nursing",
+    "bsc nursing": "B.Sc Nursing",
+}
+
+
+def _crm_webhook_url() -> str:
+    for key in ("EXTRAEEDGE_WEBHOOK_URL", "EXTRAAEDGE_WEBHOOK_URL"):
+        val = os.environ.get(key, "").strip()
+        if val:
+            return val
+    return DEFAULT_EXTRAEEDGE_WEBHOOK_URL
+
+
+def _crm_course(course: Optional[str]) -> str:
+    if not course:
+        return ""
+    mapped = _COURSE_CRM_NAMES.get(course.strip().lower())
+    return mapped or course.strip()
+
+
 def _split_name(full_name: str) -> tuple[str, str]:
     parts = (full_name or "").strip().split(None, 1)
     if not parts:
@@ -311,14 +343,16 @@ def _crm_phone(phone: str) -> str:
 def _lead_crm_payload(lead: dict) -> dict:
     first, last = _split_name(lead.get("name", ""))
     phone = _crm_phone(lead.get("phone", ""))
+    course = _crm_course(lead.get("course"))
     payload = {
         "FirstName": first,
         "LastName": last,
         "Name": lead.get("name", ""),
         "MobileNumber": phone,
         "Email": lead.get("email") or "",
-        "Course": lead.get("course") or "",
-        "Source": (lead.get("source") or os.environ.get("EXTRAEEDGE_SOURCE") or "website").strip(),
+        "Course": course,
+        "Source": (lead.get("source") or os.environ.get("EXTRAEEDGE_SOURCE") or "Website").strip(),
+        "Institute": "Shri Ram Institute of Hotel Management",
     }
     if lead.get("city"):
         payload["City"] = lead["city"]
@@ -329,15 +363,16 @@ def _lead_crm_payload(lead: dict) -> dict:
 
 async def send_crm_webhook(lead: dict) -> None:
     """Forward lead to ExtraaEdge CRM integration webhook."""
-    url = os.environ.get("EXTRAEEDGE_WEBHOOK_URL", "").strip()
+    url = _crm_webhook_url()
     if not url:
-        logger.info("[crm] skipped - no EXTRAEEDGE_WEBHOOK_URL configured")
+        logger.info("[crm] skipped - no webhook URL")
         return
 
     import json
     from urllib import error, request
 
     payload = _lead_crm_payload(lead)
+    timeout = int(os.environ.get("EXTRAEEDGE_TIMEOUT", "30"))
 
     def _post() -> str:
         data = json.dumps(payload).encode("utf-8")
@@ -347,7 +382,7 @@ async def send_crm_webhook(lead: dict) -> None:
             headers={"Content-Type": "application/json"},
             method="POST",
         )
-        with request.urlopen(req, timeout=15) as resp:
+        with request.urlopen(req, timeout=timeout) as resp:
             return resp.read().decode()
 
     try:
@@ -356,8 +391,10 @@ async def send_crm_webhook(lead: dict) -> None:
     except error.HTTPError as e:
         detail = e.read().decode() if e.fp else str(e)
         logger.warning(f"[crm] HTTP {e.code}: {detail[:300]}")
+        raise
     except Exception as e:
         logger.warning(f"[crm] failed: {e}")
+        raise
 
 
 async def send_whatsapp_notification(body: str) -> None:
@@ -1048,15 +1085,19 @@ async def _schedule_lead_notifications(
     crm: bool = True,
     email_subject: Optional[str] = None,
 ) -> None:
-    """Fan out lead to email, WhatsApp, and ExtraaEdge CRM (awaited for serverless reliability)."""
+    """Fan out lead to ExtraaEdge CRM first, then email/WhatsApp (awaited for serverless)."""
+    if crm:
+        try:
+            await send_crm_webhook(lead)
+        except Exception:
+            pass  # logged in send_crm_webhook; do not block form save
+
     tasks = []
     if email:
         subject = email_subject or f"[RIHM Lead] {lead.get('name', '')} • {lead.get('course') or 'General Enquiry'}"
         tasks.append(send_email_notification(subject=subject, html=_lead_html(lead)))
     if whatsapp:
         tasks.append(send_whatsapp_notification(_lead_whatsapp(lead)))
-    if crm:
-        tasks.append(send_crm_webhook(lead))
     if not tasks:
         return
     results = await asyncio.gather(*tasks, return_exceptions=True)
@@ -1473,6 +1514,11 @@ async def health():
         "db_name": db_name or None,
         "mongo_host": _mongo_host_hint(mongo_url) if mongo_url else None,
         "mongo_uri_mode": "srv" if mongo_url.startswith("mongodb+srv://") else "standard",
+        "crm_webhook": "configured",
+        "crm_webhook_source": (
+            "env" if os.environ.get("EXTRAEEDGE_WEBHOOK_URL") or os.environ.get("EXTRAAEDGE_WEBHOOK_URL")
+            else "default"
+        ),
     }
     if db is None:
         info["mongo"] = "not_configured"
