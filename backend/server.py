@@ -324,40 +324,42 @@ def _crm_course(course: Optional[str]) -> str:
     return mapped or course.strip()
 
 
-def _split_name(full_name: str) -> tuple[str, str]:
-    parts = (full_name or "").strip().split(None, 1)
-    if not parts:
-        return ("", "")
-    if len(parts) == 1:
-        return (parts[0], ".")
-    return (parts[0], parts[1])
+_CRM_CONSENT = (
+    "I authorize Shri Ram Institute and its representatives to Call, SMS, Email "
+    "or WhatsApp me about the details of Institute. This consent overrides any "
+    "registration for DNC / NDNC."
+)
 
 
-def _crm_phone(phone: str) -> str:
+def _crm_mobile(phone: str) -> str:
+    """ExtraaEdge webhook expects 10-digit mobile (see integration field mapping)."""
     digits = "".join(c for c in (phone or "") if c.isdigit())
-    if len(digits) == 10:
-        return f"91{digits}"
-    return digits or phone
+    if len(digits) >= 10:
+        return digits[-10:]
+    return digits
 
 
 def _lead_crm_payload(lead: dict) -> dict:
-    first, last = _split_name(lead.get("name", ""))
-    phone = _crm_phone(lead.get("phone", ""))
     course = _crm_course(lead.get("course"))
-    payload = {
-        "FirstName": first,
-        "LastName": last,
-        "Name": lead.get("name", ""),
-        "MobileNumber": phone,
-        "Email": lead.get("email") or "",
-        "Course": course,
-        "Source": (lead.get("source") or os.environ.get("EXTRAEEDGE_SOURCE") or "Website").strip(),
-        "Institute": "Shri Ram Institute of Hotel Management",
-    }
-    if lead.get("city"):
-        payload["City"] = lead["city"]
+    source = (lead.get("source") or os.environ.get("EXTRAEEDGE_SOURCE") or "website").strip()
+    subject_parts = [p for p in (course, source) if p]
+    subject = " — ".join(subject_parts) if subject_parts else "Website Enquiry"
+
+    message_parts: list[str] = []
     if lead.get("message"):
-        payload["Remarks"] = lead["message"]
+        message_parts.append(str(lead["message"]))
+    if lead.get("city"):
+        message_parts.append(f"City: {lead['city']}")
+    message = "\n".join(message_parts) if message_parts else f"Enquiry from {source}"
+
+    payload = {
+        "your-name": lead.get("name", ""),
+        "your-email": lead.get("email") or "",
+        "mobile": _crm_mobile(lead.get("phone", "")),
+        "your-subject": subject,
+        "your-message": message,
+        "checkbox-535": [_CRM_CONSENT],
+    }
     return payload
 
 
