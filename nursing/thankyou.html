@@ -13,7 +13,20 @@
         rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
-
+    <!-- Google Tag Manager -->
+    <script>
+        (function (w, d, s, l, i) {
+            w[l] = w[l] || [];
+            w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+            var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s),
+                dl = l != 'dataLayer' ? '&l=' + l : '';
+            j.async = true;
+            j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+            f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-KCVNG33V');
+    </script>
+    <!-- End Google Tag Manager -->
     <style>
         .thankyou-section {
             min-height: 100vh;
@@ -124,51 +137,58 @@
     </style>
 </head>
 
-<section class="thankyou-section d-flex align-items-start">
-    <div class="container">
-        <div class="thankyou-card mx-auto d-flex flex-column gap-3">
+<body>
+    <section class="thankyou-section d-flex align-items-start">
+        <!-- Google Tag Manager (noscript) -->
+        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KCVNG33V" height="0" width="0"
+                style="display: none; visibility: hidden"></iframe></noscript>
+        <!-- End Google Tag Manager (noscript) -->
+        <div class="container">
+            <div class="thankyou-card mx-auto d-flex flex-column gap-3">
 
-            <div class="d-flex flex-column sm:flex-row align-items-start gap-3">
-                <div class="icon-box">
-                    <i class="fa-regular fa-circle-check"></i>
+                <div class="d-flex flex-column sm:flex-row align-items-start gap-3">
+                    <div class="icon-box">
+                        <i class="fa-regular fa-circle-check"></i>
+                    </div>
+
+                    <div class="flex-grow-1">
+                        <h1 class="thankyou-title">Thank you!</h1>
+                        <p class="thankyou-text">
+                            We’ve received your request. Our counselor will reach out soon
+                            with course details and the next steps.
+                        </p>
+                    </div>
                 </div>
 
-                <div class="flex-grow-1">
-                    <h1 class="thankyou-title">Thank you!</h1>
-                    <p class="thankyou-text">
-                        We’ve received your request. Our counselor will reach out soon
-                        with course details and the next steps.
-                    </p>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <a href="tel:+917055547000"
+                            class="btn btn-light border w-100 action-btn d-flex align-items-center justify-content-center gap-2">
+                            <i class="fa-solid fa-phone"></i>
+                            Call now
+                        </a>
+                    </div>
+
+                    <div class="col-md-6">
+                        <a href="https://wa.me/917055547000?text=Hi!%20I%27m%20following%20up%20on%20my%20callback%20request."
+                            target="_blank"
+                            class="btn whatsapp-btn w-100 action-btn d-flex align-items-center justify-content-center gap-2">
+                            <i class="fa-regular fa-comment"></i>
+                            WhatsApp
+                        </a>
+                    </div>
                 </div>
+
+                <div class="links-wrap d-flex align-items-center gap-3 flex-wrap">
+                    <a href="/" class="home-link">Back to home</a>
+                    <span class="text-muted">•</span>
+                    <a href="/#contact" class="secondary-link">Submit another request</a>
+                </div>
+
             </div>
-
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <a href="tel:+917055547000"
-                        class="btn btn-light border w-100 action-btn d-flex align-items-center justify-content-center gap-2">
-                        <i class="fa-solid fa-phone"></i>
-                        Call now
-                    </a>
-                </div>
-
-                <div class="col-md-6">
-                    <a href="https://wa.me/917055547000?text=Hi!%20I%27m%20following%20up%20on%20my%20callback%20request."
-                        target="_blank"
-                        class="btn whatsapp-btn w-100 action-btn d-flex align-items-center justify-content-center gap-2">
-                        <i class="fa-regular fa-comment"></i>
-                        WhatsApp
-                    </a>
-                </div>
-            </div>
-
-            <div class="links-wrap d-flex align-items-center gap-3 flex-wrap">
-                <a href="/" class="home-link">Back to home</a>
-                <span class="text-muted">•</span>
-                <a href="/#contact" class="secondary-link">Submit another request</a>
-            </div>
-
         </div>
-    </div>
-</section>
+    </section>
+</body>
+
 
 </html>
