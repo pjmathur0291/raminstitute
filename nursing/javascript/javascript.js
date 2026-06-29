@@ -57,11 +57,12 @@ function initLeadForm() {
       }
 
       form.reset();
-      setFormMessage(
-        messageEl,
-        "success",
-        "Thank you! Our admissions counselor will contact you within 30 minutes."
-      );
+      window.location.href = "./thankyou.html";
+      // setFormMessage(
+      //   messageEl,
+      //   "success",
+      //   "Thank you! Our admissions counselor will contact you within 30 minutes."
+      // );
     } catch (error) {
       setFormMessage(messageEl, "error", error.message || "Unable to submit. Please try again.");
     } finally {
