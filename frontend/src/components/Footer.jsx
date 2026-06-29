@@ -28,6 +28,8 @@ export default function Footer() {
       setFError(err?.response?.data?.detail || "Try again or call us directly.");
     }
   };
+  const phoneNumbers = SITE.phone.split(",").map(num => num.trim());
+
   return (
     <footer data-testid="site-footer" className="bg-burgundy-700 text-white">
       <div className="container-x py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
@@ -82,7 +84,11 @@ export default function Footer() {
           <h4 className="font-display text-xl font-semibold mb-4 text-gold-300">Get in Touch</h4>
           <ul className="space-y-3 text-sm text-white/85">
             <li className="flex gap-2.5"><MapPin className="w-4 h-4 flex-shrink-0 mt-0.5 text-gold-400" /> <span>{SITE.address}</span></li>
-            <li className="flex gap-2.5"><Phone className="w-4 h-4 flex-shrink-0 mt-0.5 text-gold-400" /> <a href={`tel:${SITE.phone}`} className="hover:text-gold-300">{SITE.phoneDisplay}</a></li>
+            <li className="flex gap-2.5"><Phone className="w-4 h-4 flex-shrink-0 mt-0.5 text-gold-400" />
+              {phoneNumbers.map((phone, index) => (<a key={index}
+                href={`tel:${phone}`}
+                data-testid={`nav-call-${index}`} className="hover:text-gold-300">
+                {phone}{index < phoneNumbers.length - 1 && <span className="">,</span>}</a>))} </li>
             <li className="flex gap-2.5"><Mail className="w-4 h-4 flex-shrink-0 mt-0.5 text-gold-400" /> <a href={`mailto:${SITE.email}`} className="hover:text-gold-300 break-all">{SITE.email}</a></li>
           </ul>
           <a

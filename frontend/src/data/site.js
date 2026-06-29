@@ -5,7 +5,7 @@ export const SITE = {
   tagline: "Crafting India's Finest Hospitality Leaders Since 1999",
   phone: "+917055547000, +919837099996",
   phoneDisplay: "+917055547000, +919837099996",
-  whatsapp: "+917055547000, +919837099996",
+  whatsapp: "+917055547000",
   email: "admissions@ram.institute",
   address: "430, Niranjanpur, Dehradun, Uttarakhand 248001",
   mapsUrl: "https://maps.app.goo.gl/CzmWCZRHeKXQc3aU8",

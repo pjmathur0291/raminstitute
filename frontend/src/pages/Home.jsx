@@ -40,6 +40,7 @@ const HOME_SCHEMA = {
 export default function HomePage() {
   const { data: courses = [] } = useQuery({ queryKey: ["courses"], queryFn: () => api.get("/courses").then(r => r.data) });
   const [openFaq, setOpenFaq] = useState(0);
+  const phoneNumbers = SITE.phone.split(",").map(num => num.trim());
 
   return (
     <>
@@ -598,8 +599,10 @@ export default function HomePage() {
                 <div className="w-11 h-11 rounded-sm bg-burgundy-50 flex items-center justify-center"><Phone className="w-5 h-5 text-burgundy-500" /></div>
                 <div>
                   <p className="font-semibold text-burgundy-700">Call Admissions</p>
-                  <a href={`tel:${SITE.phone}`} className="text-burgundy-500 hover:underline">{SITE.phoneDisplay}</a>
-                  <p className="text-gray-500 text-xs">Mon-Sat, 9 AM – 7 PM</p>
+                  {phoneNumbers.map((phone, index) => (<a key={index}
+                    href={`tel:${phone}`} className="text-burgundy-500 hover:underline">{phone} {index < phoneNumbers.length - 1 && <span className="">,</span>}</a>))
+                  }
+                  < p className="text-gray-500 text-xs">Mon-Sat, 9 AM – 7 PM</p>
                 </div>
               </div>
               <a href={SITE.mapsUrl} target="_blank" rel="noreferrer" className="flex items-start gap-3 hover:opacity-80">
@@ -610,21 +613,22 @@ export default function HomePage() {
                   <p className="text-gray-500 text-xs">Click to open in Google Maps</p>
                 </div>
               </a>
-              <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="flex items-start gap-3 hover:opacity-80">
+              {phoneNumbers.map((phone, index) => (<a key={index}
+                href={`tel:${phone}`} target="_blank" rel="noreferrer" className="flex items-start gap-3 hover:opacity-80">
                 <div className="w-11 h-11 rounded-sm bg-emerald-50 flex items-center justify-center text-emerald-600">💬</div>
                 <div>
                   <p className="font-semibold text-burgundy-700">WhatsApp Counsellor</p>
-                  <p className="text-burgundy-500">{SITE.phoneDisplay}</p>
+                  <p className="text-burgundy-500">{phone}</p>
                   <p className="text-gray-500 text-xs">Reply in 2 minutes</p>
                 </div>
-              </a>
+              </a>))}
             </div>
           </div>
           <div>
             <LeadForm source="home_enquiry" testIdPrefix="home-enquiry" title="Request a Callback" subtitle="Our counsellor will contact you within 30 minutes" />
           </div>
         </div>
-      </section>
+      </section >
     </>
   );
 }

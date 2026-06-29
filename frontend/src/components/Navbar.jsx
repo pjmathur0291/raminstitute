@@ -24,13 +24,12 @@ export default function Navbar() {
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
+  const phoneNumbers = SITE.phone.split(",").map(num => num.trim());
   return (
     <header
       data-testid="site-navbar"
-      className={`sticky top-0 z-40 transition-all duration-300 ${
-        scrolled ? "bg-white/95 backdrop-blur-xl shadow-sm border-b border-burgundy-100" : "bg-white/80 backdrop-blur-md"
-      }`}
+      className={`sticky top-0 z-40 transition-all duration-300 ${scrolled ? "bg-white/95 backdrop-blur-xl shadow-sm border-b border-burgundy-100" : "bg-white/80 backdrop-blur-md"
+        }`}
     >
       <div className="container-x flex items-center justify-between h-16 lg:h-20">
         <Link to="/" data-testid="nav-logo" className="flex items-center gap-2.5 group">
@@ -51,8 +50,7 @@ export default function Navbar() {
               to={n.to}
               data-testid={`nav-${n.label.toLowerCase().replace(/\s/g, "-")}`}
               className={({ isActive }) =>
-                `px-3 py-2 text-sm font-medium transition-colors relative ${
-                  isActive ? "text-burgundy-500" : "text-gray-700 hover:text-burgundy-500"
+                `px-3 py-2 text-sm font-medium transition-colors relative ${isActive ? "text-burgundy-500" : "text-gray-700 hover:text-burgundy-500"
                 }`
               }
             >
@@ -69,13 +67,21 @@ export default function Navbar() {
         </nav>
 
         <div className="hidden lg:flex items-center gap-3">
-          <a
-            href={`tel:${SITE.phone}`}
-            data-testid="nav-call"
-            className="text-burgundy-600 font-semibold text-sm flex items-center gap-1 hover:text-burgundy-700"
-          >
-            <Phone className="w-4 h-4" /> {SITE.phoneDisplay}
-          </a>
+          <div className="flex flex-col items-center">
+            {phoneNumbers.map((phone, index) => (
+              <a
+                key={index}
+                href={`tel:${phone}`}
+                data-testid={`nav-call-${index}`}
+                className="text-burgundy-600 font-semibold text-sm flex items-center gap-1 hover:text-burgundy-700"
+              >
+                {index === 0 ? (
+                  <Phone className="w-4 h-4" />
+                ) : (<div className="pl-4"></div>)}
+                {phone}{index < phoneNumbers.length - 1 && <span className="">,</span>}
+              </a>
+            ))}
+          </div>
           <Link
             to="/apply"
             data-testid="nav-apply-now"
@@ -104,8 +110,7 @@ export default function Navbar() {
                 to={n.to}
                 onClick={() => setOpen(false)}
                 className={({ isActive }) =>
-                  `px-3 py-2.5 text-sm font-medium rounded-sm ${
-                    isActive ? "bg-burgundy-50 text-burgundy-500" : "text-gray-700 hover:bg-cream"
+                  `px-3 py-2.5 text-sm font-medium rounded-sm ${isActive ? "bg-burgundy-50 text-burgundy-500" : "text-gray-700 hover:bg-cream"
                   }`
                 }
               >
