@@ -10,7 +10,7 @@ function initLeadForm() {
   const submitBtn = form.querySelector(".cf-btn");
   const defaultBtnText = submitBtn ? submitBtn.textContent : "Request Free Counseling";
 
-  form.addEventListener("submit", async function (event) {
+  form.addEventListener("submit", function (event) {
     event.preventDefault();
     if (!form.checkValidity()) {
       form.reportValidity();
@@ -37,32 +37,31 @@ function initLeadForm() {
     setFormMessage(messageEl, "", "");
 
     try {
-      const response = await fetch("/api/leads", {
+      fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        let detail = "Something went wrong. Please call +91-7055547000.";
-        try {
-          const data = await response.json();
-          if (data && data.detail) {
-            detail = typeof data.detail === "string" ? data.detail : detail;
+      })
+        .then(async (response) => {
+          if (!response.ok) {
+            let detail = "Something went wrong. Please call +91-7055547000.";
+            try {
+              const data = await response.json();
+              if (data && data.detail) {
+                detail = typeof data.detail === "string" ? data.detail : detail;
+              }
+            } catch (_) { }
+            throw new Error(detail);
           }
-        } catch (_) {
-          /* ignore parse errors */
-        }
-        throw new Error(detail);
-      }
+        })
+        .catch((err) => {
+          console.error("Background API Error:", err);
+        });
 
-      form.reset();
-      window.location.href = "./thankyou.html";
-      // setFormMessage(
-      //   messageEl,
-      //   "success",
-      //   "Thank you! Our admissions counselor will contact you within 30 minutes."
-      // );
+      setTimeout(() => {
+        form.reset();
+        window.location.href = "./thankyou.html";
+      }, 100);
     } catch (error) {
       setFormMessage(messageEl, "error", error.message || "Unable to submit. Please try again.");
     } finally {
