@@ -1,7 +1,7 @@
-import { Phone, MessageCircle, GraduationCap, Zap } from "lucide-react";
-import { Link } from "react-router-dom";
-import { SITE, WHATSAPP_URL, WHATSAPP_URL_CALLBACK } from "../data/site";
-import { trackCall, trackWhatsApp } from "../lib/analytics";
+import { Phone, MessageCircle, GraduationCap, Zap } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { SITE, WHATSAPP_URL, WHATSAPP_URL_CALLBACK } from '../data/site';
+import { trackCall, trackWhatsApp } from '../lib/analytics';
 
 export default function StickyCTAs() {
   return (
@@ -22,7 +22,10 @@ export default function StickyCTAs() {
             className="flex-1 bg-[#25D366] text-white py-3 flex flex-col items-center"
             data-testid="cta-whatsapp"
           >
-            <div className="flex items-center gap-1"><MessageCircle className="w-4 h-4" /><span className="font-bold text-xs">WhatsApp</span></div>
+            <div className="flex items-center gap-1">
+              <MessageCircle className="w-4 h-4" />
+              <span className="font-bold text-xs">WhatsApp</span>
+            </div>
             <span className="text-[10px] opacity-90">Reply in 2 mins</span>
           </a>
           <a
@@ -31,7 +34,10 @@ export default function StickyCTAs() {
             className="flex-1 bg-[#0d6efd] text-white py-3 flex flex-col items-center"
             data-testid="cta-call"
           >
-            <div className="flex items-center gap-1"><Phone className="w-4 h-4 animate-pulse" /><span className="font-bold text-xs">Call Now</span></div>
+            <div className="flex items-center gap-1">
+              <Phone className="w-4 h-4 animate-pulse" />
+              <span className="font-bold text-xs">Call Now</span>
+            </div>
             <span className="text-[10px] opacity-90">Talk to Counselor</span>
           </a>
           <Link
@@ -39,7 +45,10 @@ export default function StickyCTAs() {
             className="flex-[1.3] bg-burgundy-500 text-white py-3 flex flex-col items-center"
             data-testid="cta-apply"
           >
-            <div className="flex items-center gap-1"><GraduationCap className="w-4 h-4" /><span className="font-black text-xs tracking-wide">APPLY 2026</span></div>
+            <div className="flex items-center gap-1">
+              <GraduationCap className="w-4 h-4" />
+              <span className="font-black text-xs tracking-wide">APPLY 2026</span>
+            </div>
             <span className="text-[10px] bg-gold-500 text-burgundy-800 px-1.5 rounded-full mt-0.5">Scholarships</span>
           </Link>
         </div>
@@ -72,9 +81,6 @@ export default function StickyCTAs() {
           <span className="font-bold text-sm">Apply for 2026</span>
           <span className="text-[10px] opacity-90">97% Placement</span>
         </div>
-        <span className="bg-gold-500 text-burgundy-800 text-[10px] px-2 py-1 rounded-full font-bold flex items-center gap-1">
-          <Zap className="w-3 h-3" /> 47 Seats
-        </span>
       </Link>
     </>
   );
