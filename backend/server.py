@@ -967,6 +967,11 @@ async def startup_event():
             )
             logger.info(f"[seed] admin password updated: {ADMIN_EMAIL}")
 
+        # Migrate renamed slugs — remove old slug docs so they don't appear as duplicates
+        _SLUG_RENAMES = {"bartending": "diploma-in-bartending"}
+        for old_slug in _SLUG_RENAMES:
+            await db.courses.delete_one({"slug": old_slug})
+
         # Seed/update default courses (always upsert hero_image so existing rows get new student photos)
         for c in DEFAULT_COURSES:
             exists = await db.courses.find_one({"slug": c["slug"]})
