@@ -303,6 +303,7 @@ _COURSE_CRM_NAMES: dict[str, str] = {
     "dhm": "Diploma in Hotel Management (DHM)",
     "culinary arts": "Diploma in Culinary Arts",
     "bakery": "Diploma in Bakery & Confectionery",
+    "diploma-in-bartending": "Diploma in Bartending & Mixology",
     "bartending": "Diploma in Bartending & Mixology",
     "b.sc nursing": "B.Sc Nursing",
     "bsc nursing": "B.Sc Nursing",
@@ -751,7 +752,7 @@ DEFAULT_COURSES = [
         "icon": "cake",
     },
     {
-        "slug": "bartending",
+        "slug": "diploma-in-bartending",
         "title": "Diploma in Bartending & Mixology",
         "short_title": "Bartending",
         "duration": "6 Months",
