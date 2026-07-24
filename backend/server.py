@@ -620,7 +620,7 @@ DEFAULT_COURSES = [
         "icon": "graduation-cap",
     },
     {
-        "slug": "mhm",
+        "slug": "master-of-hotel-management",
         "title": "Master of Hotel Management (MHM)",
         "short_title": "MHM",
         "duration": "2 Years (4 Semesters)",
@@ -968,7 +968,7 @@ async def startup_event():
             logger.info(f"[seed] admin password updated: {ADMIN_EMAIL}")
 
         # Migrate renamed slugs — remove old slug docs so they don't appear as duplicates
-        _SLUG_RENAMES = {"bartending": "diploma-in-bartending", "bakery-confectionery": "diploma-in-bakery-confectionery", "culinary-arts": "diploma-in-culinary-arts", "dhm": "diploma-in-hotel-management"}
+        _SLUG_RENAMES = {"bartending": "diploma-in-bartending", "bakery-confectionery": "diploma-in-bakery-confectionery", "culinary-arts": "diploma-in-culinary-arts", "dhm": "diploma-in-hotel-management", "mhm": "master-of-hotel-management"}
         for old_slug in _SLUG_RENAMES:
             await db.courses.delete_one({"slug": old_slug})
 
