@@ -1612,6 +1612,16 @@ async def robots_txt():
 # Include router
 app.include_router(api)
 
+# Root-level sitemap and robots — served at /sitemap.xml and /robots.txt
+# (Vercel rewrites these paths directly to the api function)
+@app.get("/sitemap.xml", include_in_schema=False)
+async def sitemap_xml_root():
+    return await sitemap_xml()
+
+@app.get("/robots.txt", include_in_schema=False)
+async def robots_txt_root():
+    return await robots_txt()
+
 # CORS
 app.add_middleware(
     CORSMiddleware,
