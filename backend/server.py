@@ -1624,9 +1624,9 @@ def _build_robots() -> Response:
         "User-agent: PerplexityBot\nAllow: /\n\n"
         "User-agent: Google-Extended\nAllow: /\n\n"
         "User-agent: Applebot-Extended\nAllow: /\n\n"
-        f"Sitemap: {SITE_BASE}/sitemap.xml\n"
-        f"Sitemap: {SITE_BASE}/main-sitemap.xml\n"
-        f"Sitemap: {SITE_BASE}/blog-sitemap.xml\n"
+        f"Sitemap: https://raminstitute.in/sitemap.xml\n"
+        f"Sitemap: https://raminstitute.in/main-sitemap.xml\n"
+        f"Sitemap: https://raminstitute.in/blog-sitemap.xml\n"
     )
     return Response(content=body, media_type="text/plain")
 
