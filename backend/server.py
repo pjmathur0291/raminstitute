@@ -688,7 +688,7 @@ DEFAULT_COURSES = [
         "icon": "clipboard-list",
     },
     {
-        "slug": "culinary-arts",
+        "slug": "diploma-in-culinary-arts",
         "title": "Diploma in Culinary Arts",
         "short_title": "Culinary Arts",
         "duration": "1 Year",
@@ -968,7 +968,7 @@ async def startup_event():
             logger.info(f"[seed] admin password updated: {ADMIN_EMAIL}")
 
         # Migrate renamed slugs — remove old slug docs so they don't appear as duplicates
-        _SLUG_RENAMES = {"bartending": "diploma-in-bartending", "bakery-confectionery": "diploma-in-bakery-confectionery"}
+        _SLUG_RENAMES = {"bartending": "diploma-in-bartending", "bakery-confectionery": "diploma-in-bakery-confectionery", "culinary-arts": "diploma-in-culinary-arts"}
         for old_slug in _SLUG_RENAMES:
             await db.courses.delete_one({"slug": old_slug})
 

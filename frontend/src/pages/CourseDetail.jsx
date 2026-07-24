@@ -69,14 +69,18 @@ export default function CourseDetail() {
             ? 'Best Bartender Course in Dehradun | Ram Institute'
             : slug === 'diploma-in-bakery-confectionery'
               ? 'Best Diploma in Bakery & Confectionery Dehradun | Ram Institute'
-              : `${course.title} in Dehradun | RIHM ${course.short_title} Course`
+              : slug === 'diploma-in-culinary-arts'
+                ? 'Best Diploma in Culinary Arts in Dehradun | Shri Ram Institute'
+                : `${course.title} in Dehradun | RIHM ${course.short_title} Course`
         }
         description={
           slug === 'diploma-in-bartending'
             ? 'Start your career with the best bartender course in Dehradun. Join Ram Institute for an affordable diploma in bartending and hands-on training.'
             : slug === 'diploma-in-bakery-confectionery'
               ? 'Build your baking career with the best diploma courses in bakery and pastry Dehradun. Get practical training, expert guidance, and industry exposure.'
-              : `${course.title} at Shri Ram Institute Dehradun. ${course.duration}. ${course.eligibility}. 97% placement at Taj, Oberoi, ITC. Apply for 2026 batch.`
+              : slug === 'diploma-in-culinary-arts'
+                ? 'Join Ram Institute for the best diploma in Culinary Arts in Dehradun. Learn from expert chefs with practical training, modern kitchens, and placement support.'
+                : `${course.title} at Shri Ram Institute Dehradun. ${course.duration}. ${course.eligibility}. 97% placement at Taj, Oberoi, ITC. Apply for 2026 batch.`
         }
         canonical={`https://ram.institute/courses/${slug}`}
         image={course.hero_image}
