@@ -16,6 +16,8 @@
   "redirects": [{ "source": "/nursing", "destination": "/nursing/", "permanent": true }],
   "rewrites": [
     { "source": "/sitemap.xml", "destination": "/api" },
+    { "source": "/main-sitemap.xml", "destination": "/api" },
+    { "source": "/blog-sitemap.xml", "destination": "/api" },
     { "source": "/robots.txt", "destination": "/api" },
     { "source": "/api/:path*", "destination": "/api" },
     { "source": "/(.*)", "destination": "/index.html" }

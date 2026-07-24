@@ -1572,10 +1572,23 @@ STATIC_URLS = [
 
 @api.get("/sitemap.xml")
 async def sitemap_xml():
+    # Main sitemap index pointing to sub-sitemaps
+    lastmod = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    parts = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+        f'<sitemap><loc>{SITE_BASE}/main-sitemap.xml</loc><lastmod>{lastmod}</lastmod></sitemap>',
+        f'<sitemap><loc>{SITE_BASE}/blog-sitemap.xml</loc><lastmod>{lastmod}</lastmod></sitemap>',
+        '</sitemapindex>'
+    ]
+    return Response(content="\n".join(parts), media_type="application/xml")
+
+
+@api.get("/main-sitemap.xml")
+async def main_sitemap_xml():
+    # Main pages and course pages
     cursor = db.courses.find({"is_active": True}, {"slug": 1, "_id": 0})
     courses = await cursor.to_list(50)
-    cursor = db.blog_posts.find({"published": True}, {"slug": 1, "_id": 0})
-    blogs = await cursor.to_list(200)
     lastmod = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
     parts = ['<?xml version="1.0" encoding="UTF-8"?>',
@@ -1584,8 +1597,25 @@ async def sitemap_xml():
         parts.append(f"<url><loc>{SITE_BASE}{path}</loc><lastmod>{lastmod}</lastmod><changefreq>{freq}</changefreq><priority>{pri}</priority></url>")
     for c in courses:
         parts.append(f"<url><loc>{SITE_BASE}/courses/{c['slug']}</loc><lastmod>{lastmod}</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>")
+    parts.append("</urlset>")
+    return Response(content="\n".join(parts), media_type="application/xml")
+
+
+@api.get("/blog-sitemap.xml")
+async def blog_sitemap_xml():
+    # All blog posts
+    cursor = db.blog_posts.find({"published": True}, {"slug": 1, "updated_at": 1, "_id": 0})
+    blogs = await cursor.to_list(500)
+    lastmod = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+    parts = ['<?xml version="1.0" encoding="UTF-8"?>',
+             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for b in blogs:
-        parts.append(f"<url><loc>{SITE_BASE}/blog/{b['slug']}</loc><lastmod>{lastmod}</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>")
+        # Use blog's updated_at if available, otherwise use current date
+        blog_lastmod = b.get("updated_at", lastmod)
+        if isinstance(blog_lastmod, str) and "T" in blog_lastmod:
+            blog_lastmod = blog_lastmod.split("T")[0]
+        parts.append(f"<url><loc>{SITE_BASE}/blog/{b['slug']}</loc><lastmod>{blog_lastmod}</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>")
     parts.append("</urlset>")
     return Response(content="\n".join(parts), media_type="application/xml")
 
@@ -1617,6 +1647,14 @@ app.include_router(api)
 @app.get("/sitemap.xml", include_in_schema=False)
 async def sitemap_xml_root():
     return await sitemap_xml()
+
+@app.get("/main-sitemap.xml", include_in_schema=False)
+async def main_sitemap_xml_root():
+    return await main_sitemap_xml()
+
+@app.get("/blog-sitemap.xml", include_in_schema=False)
+async def blog_sitemap_xml_root():
+    return await blog_sitemap_xml()
 
 @app.get("/robots.txt", include_in_schema=False)
 async def robots_txt_root():
