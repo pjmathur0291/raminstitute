@@ -36,7 +36,7 @@ def test_sitemap_contains_static_courses_blogs():
     for p in static_paths:
         assert f"<loc>https://ram.institute{p}</loc>" in body, f"missing static {p}"
     # 6 course slugs
-    for slug in ["bhm", "master-of-hotel-management", "diploma-in-hotel-management", "diploma-in-culinary-arts", "diploma-in-bakery-confectionery", "diploma-in-bartending"]:
+    for slug in ["bachelor-of-hotel-management", "master-of-hotel-management", "diploma-in-hotel-management", "diploma-in-culinary-arts", "diploma-in-bakery-confectionery", "diploma-in-bartending"]:
         assert f"/courses/{slug}" in body, f"missing course {slug}"
     # 8 blog slugs
     for slug in EXPECTED_BLOG_SLUGS:

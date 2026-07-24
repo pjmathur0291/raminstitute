@@ -7,7 +7,7 @@ import requests
 BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://culinary-gateway.preview.emergentagent.com").rstrip("/")
 ADMIN_EMAIL = "admin@ram.institute"
 ADMIN_PASSWORD = "Ram@2026"
-EXPECTED_SLUGS = {"bhm", "master-of-hotel-management", "diploma-in-hotel-management", "diploma-in-culinary-arts", "diploma-in-bakery-confectionery", "diploma-in-bartending"}
+EXPECTED_SLUGS = {"bachelor-of-hotel-management", "master-of-hotel-management", "diploma-in-hotel-management", "diploma-in-culinary-arts", "diploma-in-bakery-confectionery", "diploma-in-bartending"}
 
 
 @pytest.fixture(scope="session")

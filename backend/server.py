@@ -579,7 +579,7 @@ class VerifyPaymentIn(BaseModel):
 # ----------------------------------------------------------------------------
 DEFAULT_COURSES = [
     {
-        "slug": "bhm",
+        "slug": "bachelor-of-hotel-management",
         "title": "Bachelor of Hotel Management (BHM)",
         "short_title": "BHM",
         "duration": "3 Years (6 Semesters)",
@@ -968,7 +968,7 @@ async def startup_event():
             logger.info(f"[seed] admin password updated: {ADMIN_EMAIL}")
 
         # Migrate renamed slugs — remove old slug docs so they don't appear as duplicates
-        _SLUG_RENAMES = {"bartending": "diploma-in-bartending", "bakery-confectionery": "diploma-in-bakery-confectionery", "culinary-arts": "diploma-in-culinary-arts", "dhm": "diploma-in-hotel-management", "mhm": "master-of-hotel-management"}
+        _SLUG_RENAMES = {"bartending": "diploma-in-bartending", "bakery-confectionery": "diploma-in-bakery-confectionery", "culinary-arts": "diploma-in-culinary-arts", "dhm": "diploma-in-hotel-management", "mhm": "master-of-hotel-management", "bhm": "bachelor-of-hotel-management"}
         for old_slug in _SLUG_RENAMES:
             await db.courses.delete_one({"slug": old_slug})
 

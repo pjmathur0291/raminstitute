@@ -75,7 +75,9 @@ export default function CourseDetail() {
                   ? 'Diploma in Hotel Management in Dehradun | Shri Ram Institute'
                   : slug === 'master-of-hotel-management'
                     ? 'Master of Hotel Management in Dehradun | Ram Institute'
-                    : `${course.title} in Dehradun | RIHM ${course.short_title} Course`
+                    : slug === 'bachelor-of-hotel-management'
+                      ? 'Bachelor of Hotel Management in Dehradun | Ram Institute'
+                      : `${course.title} in Dehradun | RIHM ${course.short_title} Course`
         }
         description={
           slug === 'diploma-in-bartending'
@@ -88,7 +90,9 @@ export default function CourseDetail() {
                   ? 'Join Ram Institute for a diploma in hotel management in Dehradun. Get expert training, practical learning, and placement support.'
                   : slug === 'master-of-hotel-management'
                     ? 'Study Master of Hotel Management in Dehradun at Ram Institute. Build leadership skills with expert faculty, practical learning, and placement support.'
-                    : `${course.title} at Shri Ram Institute Dehradun. ${course.duration}. ${course.eligibility}. 97% placement at Taj, Oberoi, ITC. Apply for 2026 batch.`
+                    : slug === 'bachelor-of-hotel-management'
+                      ? 'Join Ram Institute for a Bachelor of Hotel Management in Dehradun. Learn from industry experts with hands-on training and career support.'
+                      : `${course.title} at Shri Ram Institute Dehradun. ${course.duration}. ${course.eligibility}. 97% placement at Taj, Oberoi, ITC. Apply for 2026 batch.`
         }
         canonical={`https://ram.institute/courses/${slug}`}
         image={course.hero_image}

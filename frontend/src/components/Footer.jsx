@@ -84,7 +84,7 @@ export default function Footer() {
           <h4 className="font-display text-xl font-semibold mb-4 text-gold-300">Courses</h4>
           <ul className="space-y-2 text-sm text-white/80">
             <li>
-              <Link to="/courses/bhm" className="hover:text-gold-300">
+              <Link to="/courses/bachelor-of-hotel-management" className="hover:text-gold-300">
                 Bachelor of Hotel Management (BHM)
               </Link>
             </li>

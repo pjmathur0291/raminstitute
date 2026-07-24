@@ -70,6 +70,7 @@ export default function App() {
             <Route path="/courses/culinary-arts" element={<Navigate to="/courses/diploma-in-culinary-arts" replace />} />
             <Route path="/courses/dhm" element={<Navigate to="/courses/diploma-in-hotel-management" replace />} />
             <Route path="/courses/mhm" element={<Navigate to="/courses/master-of-hotel-management" replace />} />
+            <Route path="/courses/bhm" element={<Navigate to="/courses/bachelor-of-hotel-management" replace />} />
             <Route path="/courses/:slug" element={<CourseDetail />} />
             <Route path="/placements" element={<PlacementsPage />} />
             <Route path="/scholarships" element={<ScholarshipsPage />} />
