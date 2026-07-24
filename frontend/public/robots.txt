@@ -18,4 +18,4 @@ Allow: /
 User-agent: Applebot-Extended
 Allow: /
 
-Sitemap: https://ram.institute/api/sitemap.xml
+Sitemap: https://ram.institute/sitemap.xml

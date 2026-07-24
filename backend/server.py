@@ -1552,16 +1552,21 @@ STATIC_URLS = [
     ("/", "1.0", "weekly"),
     ("/about", "0.8", "monthly"),
     ("/courses", "0.9", "weekly"),
-    ("/placements", "0.9", "weekly"),
-    ("/scholarships", "0.9", "monthly"),
+    ("/courses/bachelor-of-hotel-management", "0.9", "monthly"),
+    ("/courses/master-of-hotel-management", "0.9", "monthly"),
+    ("/courses/diploma-in-hotel-management", "0.9", "monthly"),
+    ("/courses/diploma-in-culinary-arts", "0.9", "monthly"),
+    ("/courses/diploma-in-bakery-confectionery", "0.9", "monthly"),
+    ("/courses/diploma-in-bartending", "0.9", "monthly"),
+    ("/placements", "0.8", "monthly"),
+    ("/scholarships", "0.8", "monthly"),
     ("/campus-life", "0.7", "monthly"),
     ("/gallery", "0.6", "monthly"),
     ("/blog", "0.7", "weekly"),
     ("/contact", "0.9", "monthly"),
     ("/apply", "1.0", "weekly"),
-    ("/career-guide", "0.8", "monthly"),
-    ("/salary-after-hotel-management", "0.8", "monthly"),
-    ("/bhm-vs-diploma", "0.8", "monthly"),
+    ("/privacy", "0.3", "yearly"),
+    ("/terms", "0.3", "yearly"),
 ]
 
 
@@ -1599,7 +1604,7 @@ async def robots_txt():
         "User-agent: PerplexityBot\nAllow: /\n\n"
         "User-agent: Google-Extended\nAllow: /\n\n"
         "User-agent: Applebot-Extended\nAllow: /\n\n"
-        f"Sitemap: {SITE_BASE}/api/sitemap.xml\n"
+        f"Sitemap: {SITE_BASE}/sitemap.xml\n"
     )
     return Response(content=body, media_type="text/plain")
 
