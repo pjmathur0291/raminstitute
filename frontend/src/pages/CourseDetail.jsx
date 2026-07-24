@@ -111,8 +111,8 @@ export default function CourseDetail() {
           )}
           <div className="absolute inset-0 bg-gradient-to-r from-burgundy-800 via-burgundy-700/95 to-burgundy-600/70" />
         </div>
-        <div className="container-x relative z-10 grid lg:grid-cols-3 gap-10 items-center">
-          <div className="lg:col-span-2">
+        <div className="container-x relative z-10 lg:flex gap-10 items-center">
+          <div className="lg:col-span-2 w-full max-w-[900px] lg:mb-0 mb-10">
             <Link
               to="/courses"
               className="inline-flex items-center gap-1 text-gold-300 text-xs uppercase tracking-widest hover:text-gold-400 mb-3"
@@ -136,7 +136,7 @@ export default function CourseDetail() {
               </div>
             </div>
           </div>
-          <div className="bg-white/10 backdrop-blur border border-white/20 rounded-sm p-5">
+          <div className="bg-white/10 backdrop-blur border border-white/20 rounded-sm p-5 w-full max-w-[500px] mx-auto">
             <div className="bg-gold-500 text-burgundy-900 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-sm inline-flex items-center gap-1 mb-3">
               <Sparkles className="w-3 h-3" /> 47 Seats Left
             </div>
