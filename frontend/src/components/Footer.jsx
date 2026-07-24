@@ -104,7 +104,7 @@ export default function Footer() {
               </Link>
             </li>
             <li>
-              <Link to="/courses/bakery-confectionery" className="hover:text-gold-300">
+              <Link to="/courses/diploma-in-bakery-confectionery" className="hover:text-gold-300">
                 Bakery & Confectionery
               </Link>
             </li>
