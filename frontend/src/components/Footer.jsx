@@ -94,7 +94,7 @@ export default function Footer() {
               </Link>
             </li>
             <li>
-              <Link to="/courses/dhm" className="hover:text-gold-300">
+              <Link to="/courses/diploma-in-hotel-management" className="hover:text-gold-300">
                 Diploma in Hotel Management (DHM)
               </Link>
             </li>
