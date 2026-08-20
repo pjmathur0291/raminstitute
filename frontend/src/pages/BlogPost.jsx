@@ -139,7 +139,7 @@ export default function BlogPost() {
           <div className="relative h-1 bg-gradient-to-r from-gold-600 via-gold-400 to-gold-600" />
 
           {/* — content — */}
-          <div className="relative container-x max-w-5xl pt-14 md:pt-20 md:pb-[170px]">
+          <div className="relative container-x max-w-5xl pt-10 md:pt-20 pb-[100px] md:pb-[170px]">
             {/* Back link */}
             <Link
               to="/blog"
@@ -169,10 +169,10 @@ export default function BlogPost() {
             </div>
 
             {/* Excerpt */}
-            <p className="text-white/75 text-lg md:text-xl leading-relaxed mb-10 max-w-3xl">{post.excerpt}</p>
+            <p className="text-white/75 text-base md:text-xl leading-relaxed mb-8 md:mb-10 max-w-3xl">{post.excerpt}</p>
 
             {/* Meta bar */}
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-3 pt-6 border-t border-white/10">
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-3 pt-6 border-t border-white/10">
               {/* Author avatar + name */}
               <div className="flex items-center gap-2.5">
                 <div className="w-9 h-9 rounded-full bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center shadow-md flex-shrink-0">
@@ -198,7 +198,7 @@ export default function BlogPost() {
 
               <button
                 onClick={handleShare}
-                className="ml-auto flex items-center gap-2 text-sm text-white/60 hover:text-white border border-white/20 hover:border-white/40 px-3 py-1.5 rounded-full transition-all"
+                className="sm:ml-auto flex items-center gap-2 text-sm text-white/60 hover:text-white border border-white/20 hover:border-white/40 px-3 py-1.5 rounded-full transition-all"
               >
                 <Share2 className="w-3.5 h-3.5" />
                 Share
@@ -209,22 +209,24 @@ export default function BlogPost() {
 
         <div className="max-w-5xl container-x">
           <div
-            className="md:p-6 p-4 rounded-md border border-burgundy-100 bg-white  w-full mx-auto relative -m-[90px]  mb-[64px] md:mb-[96px]"
+            className="p-4 md:p-6 rounded-md border border-burgundy-100 bg-white w-full mx-auto relative -mt-[60px] md:-mt-[90px] mb-12 md:mb-24"
             style={{ borderRadius: '16px' }}
           >
             {/* ══════════════════════════════════════════════
             2. COVER IMAGE
         ══════════════════════════════════════════════ */}
             {post.cover_image && (
-              <div className="bg-white">
+              <div className="">
                 <div className="">
-                  <div className="aspect-[16/9] overflow-hidden rounded-sm shadow-2xl ring-1 ring-black/5">
+                  <div
+                    className="aspect-[16/9] overflow-hidden rounded-sm shadow-2xl ring-1 ring-black/5"
+                    style={{ borderRadius: '16px' }}
+                  >
                     <img
                       src={optimizedCover || post.cover_image}
                       alt={post.title}
                       className="w-full h-full object-cover"
                       loading="eager"
-                      style={{ borderRadius: '16px' }}
                     />
                   </div>
                 </div>
@@ -254,7 +256,7 @@ export default function BlogPost() {
         ══════════════════════════════════════════════ */}
             <div className="bg-white">
               <div className="py-8">
-                <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div className="flex items-center gap-3">
                     <div className="w-11 h-11 rounded-full bg-burgundy-100 flex items-center justify-center">
                       <User className="w-5 h-5 text-burgundy-600" />
@@ -281,7 +283,7 @@ export default function BlogPost() {
         ══════════════════════════════════════════════ */}
         <div className="bg-gradient-to-b from-white to-cream py-16">
           <div className="container-x max-w-5xl">
-            <div className="relative overflow-hidden bg-burgundy-700 rounded-sm p-8 md:p-12 shadow-burgundy">
+            <div className="relative overflow-hidden bg-burgundy-700 rounded-sm p-6 md:p-12 shadow-burgundy">
               {/* Decorative bg elements */}
               <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-burgundy-600 opacity-50" />
               <div className="absolute -bottom-14 -left-14 w-60 h-60 rounded-full bg-burgundy-800 opacity-40" />
@@ -318,13 +320,13 @@ export default function BlogPost() {
                 </div>
 
                 {/* Right: buttons */}
-                <div className="flex flex-col gap-3 flex-shrink-0">
-                  <Link to="/apply" className="btn-gold text-center whitespace-nowrap">
+                <div className="flex flex-col gap-3 flex-shrink-0 w-full md:w-auto">
+                  <Link to="/apply" className="btn-gold text-center whitespace-nowrap w-full md:w-auto">
                     Apply for 2026 Batch
                   </Link>
                   <Link
                     to="/courses"
-                    className="inline-flex items-center justify-center gap-2 border-2 border-white/30 text-white hover:bg-white/10 font-medium px-6 py-3 rounded-sm transition-colors text-sm whitespace-nowrap"
+                    className="inline-flex items-center justify-center gap-2 border-2 border-white/30 text-white hover:bg-white/10 font-medium px-6 py-3 rounded-sm transition-colors text-sm whitespace-nowrap w-full md:w-auto"
                   >
                     Explore Courses
                   </Link>
