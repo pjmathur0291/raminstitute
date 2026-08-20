@@ -516,6 +516,10 @@ class BlogPostModel(BaseModel):
     cover_image: Optional[str] = None
     published: bool = True
     created_at: str = Field(default_factory=iso_now)
+    updated_at: Optional[str] = None
+    meta_title: Optional[str] = None
+    meta_description: Optional[str] = None
+    meta_keywords: Optional[str] = None
 
 
 class BlogPostUpsert(BaseModel):
@@ -527,6 +531,9 @@ class BlogPostUpsert(BaseModel):
     author: str = "RIHM Editorial"
     cover_image: Optional[str] = None
     published: bool = True
+    meta_title: Optional[str] = None
+    meta_description: Optional[str] = None
+    meta_keywords: Optional[str] = None
 
 
 # ---- Application / Registration (paid) ----
@@ -995,8 +1002,36 @@ async def startup_event():
                     "author": "RIHM Editorial",
                     "published": True,
                     "created_at": iso_now(),
+                    "updated_at": iso_now(),
+                    "meta_title": post.get("meta_title") or post["title"],
+                    "meta_description": post.get("meta_description") or post["excerpt"],
+                    "meta_keywords": post.get("meta_keywords") or post["category"],
                 })
             logger.info(f"[seed] {len(DEFAULT_BLOG_POSTS)} silo blog posts inserted")
+        else:
+            # Migration: patch existing posts that are missing the new SEO + updated_at fields
+            migrated = 0
+            async for doc in db.blog_posts.find(
+                {"$or": [
+                    {"meta_title": {"$exists": False}},
+                    {"meta_description": {"$exists": False}},
+                    {"meta_keywords": {"$exists": False}},
+                    {"updated_at": {"$exists": False}},
+                ]},
+                {"_id": 1, "title": 1, "excerpt": 1, "category": 1}
+            ):
+                await db.blog_posts.update_one(
+                    {"_id": doc["_id"]},
+                    {"$set": {
+                        "meta_title": doc.get("meta_title") or doc.get("title", ""),
+                        "meta_description": doc.get("meta_description") or doc.get("excerpt", ""),
+                        "meta_keywords": doc.get("meta_keywords") or doc.get("category", ""),
+                        "updated_at": iso_now(),
+                    }}
+                )
+                migrated += 1
+            if migrated:
+                logger.info(f"[migrate] patched {migrated} blog posts with SEO + updated_at fields")
     except Exception as e:
         logger.error(f"[startup] seed/index failed: {e}")
 
@@ -1246,10 +1281,13 @@ async def get_blog_post(slug: str):
 async def upsert_blog(payload: BlogPostUpsert, admin: dict = Depends(get_current_admin)):
     existing = await db.blog_posts.find_one({"slug": payload.slug})
     if existing:
-        await db.blog_posts.update_one({"slug": payload.slug}, {"$set": payload.model_dump()})
+        await db.blog_posts.update_one(
+            {"slug": payload.slug}, 
+            {"$set": {**payload.model_dump(), "updated_at": iso_now()}}
+        )
         post = await db.blog_posts.find_one({"slug": payload.slug}, {"_id": 0})
         return BlogPostModel(**post)
-    doc = {**payload.model_dump(), "id": str(uuid.uuid4()), "created_at": iso_now()}
+    doc = {**payload.model_dump(), "id": str(uuid.uuid4()), "created_at": iso_now(), "updated_at": iso_now()}
     await db.blog_posts.insert_one(doc.copy())
     doc.pop("_id", None)
     return BlogPostModel(**doc)
