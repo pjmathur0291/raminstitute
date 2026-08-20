@@ -207,9 +207,9 @@ export default function BlogPost() {
           </div>
         </header>
 
-        <div className="max-w-5xl container-x mb-[64px] md:mb-[96px]">
+        <div className="max-w-5xl container-x">
           <div
-            className="md:p-6 p-4 rounded-md border border-burgundy-100 bg-white  w-full mx-auto relative -m-[90px]"
+            className="md:p-6 p-4 rounded-md border border-burgundy-100 bg-white  w-full mx-auto relative -m-[90px]  mb-[64px] md:mb-[96px]"
             style={{ borderRadius: '16px' }}
           >
             {/* ══════════════════════════════════════════════
