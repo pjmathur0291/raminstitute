@@ -367,7 +367,9 @@ export default function TipTapEditor({ content = '', onChange, placeholder = 'Wr
       )}
 
       {/* Editor Content */}
-      <EditorContent editor={editor} placeholder={placeholder} />
+      <div className="max-h-[500px] overflow-y-auto">
+        <EditorContent editor={editor} placeholder={placeholder} />
+      </div>
 
       {/* Character Count */}
       <div className="border-t border-gray-200 px-4 py-2 bg-gray-50 text-xs text-gray-500 text-right">
