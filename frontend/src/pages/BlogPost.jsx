@@ -2,7 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import SEO from '../lib/SEO';
 import api from '../lib/api';
-import { ChevronLeft, Calendar, User, Tag, Clock, Share2, BookOpen } from 'lucide-react';
+import { ChevronLeft, Calendar, User, Tag, Clock, Share2, BookOpen, GraduationCap, Award } from 'lucide-react';
 import { getOptimizedCloudinaryUrl } from '../components/CloudinaryUpload';
 
 export default function BlogPost() {
@@ -105,68 +105,117 @@ export default function BlogPost() {
       />
 
       <article>
-        {/* ── 1. HERO HEADER ── */}
-        <header className="bg-gradient-to-b from-burgundy-700 via-burgundy-600 to-burgundy-700 text-white">
-          <div className="container-x max-w-4xl py-14 md:py-20">
+        {/* ══════════════════════════════════════════════
+            1. HERO BANNER — rich, layered, editorial
+        ══════════════════════════════════════════════ */}
+        <header className="relative overflow-hidden bg-burgundy-800 text-white">
+          {/* — decorative layer: large faint circles — */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div className="absolute -top-24 -right-24 w-[420px] h-[420px] rounded-full bg-burgundy-700 opacity-60" />
+            <div className="absolute top-1/2 -left-32 w-[320px] h-[320px] rounded-full bg-burgundy-900 opacity-50" />
+            <div className="absolute -bottom-16 right-1/3 w-[260px] h-[260px] rounded-full bg-gold-600 opacity-10" />
+          </div>
+
+          {/* — decorative layer: gold diagonal stripe — */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                'linear-gradient(135deg, transparent 60%, rgba(212,175,55,0.08) 60%, rgba(212,175,55,0.08) 70%, transparent 70%)',
+            }}
+          />
+
+          {/* — decorative layer: subtle dot grid — */}
+          <div
+            className="absolute inset-0 pointer-events-none opacity-[0.04]"
+            style={{
+              backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)',
+              backgroundSize: '28px 28px',
+            }}
+          />
+
+          {/* — gold top accent bar — */}
+          <div className="relative h-1 bg-gradient-to-r from-gold-600 via-gold-400 to-gold-600" />
+
+          {/* — content — */}
+          <div className="relative container-x max-w-5xl py-14 md:py-20">
             {/* Back link */}
             <Link
               to="/blog"
-              className="inline-flex items-center gap-1.5 text-white/70 hover:text-white text-sm font-medium mb-8 transition-colors"
+              className="inline-flex items-center gap-1.5 text-white/60 hover:text-white text-sm font-medium mb-8 transition-colors group"
             >
-              <ChevronLeft className="w-4 h-4" /> Back to Blog
+              <ChevronLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+              Back to Blog
             </Link>
 
             {/* Category pill */}
             <div className="mb-5">
-              <span className="inline-flex items-center gap-1.5 bg-gold-500/20 border border-gold-400/40 text-gold-300 text-xs uppercase tracking-widest font-bold px-3 py-1.5 rounded-full">
+              <span className="inline-flex items-center gap-1.5 bg-gold-500/15 border border-gold-400/30 text-gold-300 text-[11px] uppercase tracking-[0.2em] font-bold px-3.5 py-1.5 rounded-full">
                 <Tag className="w-3 h-3" />
                 {post.category}
               </span>
             </div>
 
             {/* Title */}
-            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-white">
+            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-bold leading-[1.15] mb-6 text-white max-w-4xl">
               {post.title}
             </h1>
 
+            {/* Gold divider accent */}
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-[2px] w-10 bg-gold-500 rounded-full" />
+              <div className="h-[2px] w-4 bg-gold-500/40 rounded-full" />
+            </div>
+
             {/* Excerpt */}
-            <p className="text-white/80 text-lg md:text-xl leading-relaxed mb-8 max-w-3xl">{post.excerpt}</p>
+            <p className="text-white/75 text-lg md:text-xl leading-relaxed mb-10 max-w-3xl">{post.excerpt}</p>
 
             {/* Meta bar */}
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-white/70 pt-6 border-t border-white/20">
-              <span className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-full bg-gold-500/30 flex items-center justify-center">
-                  <User className="w-3.5 h-3.5 text-gold-300" />
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-3 pt-6 border-t border-white/10">
+              {/* Author avatar + name */}
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center shadow-md flex-shrink-0">
+                  <User className="w-4 h-4 text-burgundy-900" />
                 </div>
-                <span className="text-white font-medium">{post.author}</span>
-              </span>
+                <div>
+                  <p className="text-[10px] text-white/50 uppercase tracking-widest leading-none mb-0.5">Author</p>
+                  <p className="text-white font-semibold text-sm leading-none">{post.author}</p>
+                </div>
+              </div>
 
-              <span className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-gold-400" />
+              <div className="w-px h-8 bg-white/10 hidden sm:block" />
+
+              <span className="flex items-center gap-2 text-sm text-white/60">
+                <Calendar className="w-4 h-4 text-gold-400 flex-shrink-0" />
                 {formatDate(post.created_at)}
               </span>
 
-              <span className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-gold-400" />
+              <span className="flex items-center gap-2 text-sm text-white/60">
+                <Clock className="w-4 h-4 text-gold-400 flex-shrink-0" />
                 {readingTime} min read
               </span>
 
               <button
                 onClick={handleShare}
-                className="ml-auto flex items-center gap-2 text-white/70 hover:text-white transition-colors"
+                className="ml-auto flex items-center gap-2 text-sm text-white/60 hover:text-white border border-white/20 hover:border-white/40 px-3 py-1.5 rounded-full transition-all"
               >
-                <Share2 className="w-4 h-4" />
+                <Share2 className="w-3.5 h-3.5" />
                 Share
               </button>
             </div>
           </div>
+
+          {/* — bottom fade into white (where cover image sits) — */}
+          <div className="relative h-12 bg-gradient-to-b from-burgundy-800 to-white" />
         </header>
 
-        {/* ── 2. COVER IMAGE ── */}
+        {/* ══════════════════════════════════════════════
+            2. COVER IMAGE
+        ══════════════════════════════════════════════ */}
         {post.cover_image && (
-          <div className="bg-burgundy-700">
-            <div className="container-x max-w-5xl">
-              <div className="aspect-[16/7] overflow-hidden rounded-b-sm shadow-2xl">
+          <div className="bg-white">
+            <div className="container-x max-w-5xl -mt-6">
+              <div className="aspect-[16/7] overflow-hidden rounded-sm shadow-2xl ring-1 ring-black/5">
                 <img
                   src={optimizedCover || post.cover_image}
                   alt={post.title}
@@ -178,104 +227,38 @@ export default function BlogPost() {
           </div>
         )}
 
-        {/* ── 3. ARTICLE BODY ── */}
+        {/* ══════════════════════════════════════════════
+            3. ARTICLE BODY
+        ══════════════════════════════════════════════ */}
         <div className="bg-white">
-          <div className="container-x max-w-3xl py-14 md:py-20">
-            <div
-              className="
-                /* ── Base text ── */
-                text-gray-800 text-[17px] leading-[1.85] font-body
-
-                /* ── Paragraphs ── */
-                [&>p]:mb-6 [&>p]:leading-[1.85]
-
-                /* ── Headings ── */
-                [&>h1]:font-display [&>h1]:text-4xl [&>h1]:font-bold [&>h1]:text-burgundy-700
-                [&>h1]:mt-12 [&>h1]:mb-5 [&>h1]:leading-tight [&>h1]:tracking-tight
-
-                [&>h2]:font-display [&>h2]:text-3xl [&>h2]:font-bold [&>h2]:text-burgundy-700
-                [&>h2]:mt-10 [&>h2]:mb-4 [&>h2]:leading-snug
-                [&>h2]:pb-3 [&>h2]:border-b [&>h2]:border-burgundy-100
-
-                [&>h3]:font-display [&>h3]:text-2xl [&>h3]:font-semibold [&>h3]:text-burgundy-600
-                [&>h3]:mt-8 [&>h3]:mb-3 [&>h3]:leading-snug
-
-                [&>h4]:font-sans [&>h4]:text-lg [&>h4]:font-semibold [&>h4]:text-gray-900
-                [&>h4]:mt-6 [&>h4]:mb-2
-
-                /* ── First heading top spacing fix ── */
-                [&>*:first-child]:mt-0
-
-                /* ── Strong ── */
-                [&_strong]:font-semibold [&_strong]:text-gray-900
-
-                /* ── Links ── */
-                [&_a]:text-burgundy-600 [&_a]:underline [&_a]:underline-offset-2
-                [&_a:hover]:text-burgundy-700 [&_a]:transition-colors
-
-                /* ── Bullet list ── */
-                [&>ul]:my-6 [&>ul]:pl-0 [&>ul]:space-y-2 [&>ul]:list-none
-                [&>ul>li]:relative [&>ul>li]:pl-6
-                [&>ul>li]:before:content-[''] [&>ul>li]:before:absolute [&>ul>li]:before:left-0
-                [&>ul>li]:before:top-[0.6em] [&>ul>li]:before:w-2 [&>ul>li]:before:h-2
-                [&>ul>li]:before:rounded-full [&>ul>li]:before:bg-gold-500
-
-                /* ── Ordered list ── */
-                [&>ol]:my-6 [&>ol]:pl-0 [&>ol]:space-y-3 [&>ol]:list-none [&>ol]:counter-reset-[list-counter]
-                [&>ol>li]:relative [&>ol>li]:pl-10 [&>ol>li]:counter-increment-[list-counter]
-                [&>ol>li]:before:content-[counter(list-counter)] [&>ol>li]:before:absolute
-                [&>ol>li]:before:left-0 [&>ol>li]:before:top-0 [&>ol>li]:before:flex
-                [&>ol>li]:before:items-center [&>ol>li]:before:justify-center
-                [&>ol>li]:before:w-7 [&>ol>li]:before:h-7 [&>ol>li]:before:rounded-full
-                [&>ol>li]:before:bg-burgundy-600 [&>ol>li]:before:text-white
-                [&>ol>li]:before:text-xs [&>ol>li]:before:font-bold [&>ol>li]:before:leading-none
-
-                /* ── Blockquote ── */
-                [&>blockquote]:my-8 [&>blockquote]:pl-6 [&>blockquote]:pr-4 [&>blockquote]:py-4
-                [&>blockquote]:border-l-4 [&>blockquote]:border-gold-500
-                [&>blockquote]:bg-gold-50 [&>blockquote]:rounded-r-sm
-                [&>blockquote]:italic [&>blockquote]:text-gray-700 [&>blockquote]:text-lg
-
-                /* ── Inline code ── */
-                [&_code]:bg-burgundy-50 [&_code]:text-burgundy-700 [&_code]:px-1.5 [&_code]:py-0.5
-                [&_code]:rounded [&_code]:text-[0.875em] [&_code]:font-mono [&_code]:border
-                [&_code]:border-burgundy-100
-
-                /* ── Code block ── */
-                [&>pre]:my-6 [&>pre]:bg-gray-900 [&>pre]:text-gray-100 [&>pre]:p-5
-                [&>pre]:rounded-sm [&>pre]:overflow-x-auto [&>pre]:text-sm [&>pre]:font-mono
-                [&>pre>code]:bg-transparent [&>pre>code]:border-0 [&>pre>code]:text-gray-100
-                [&>pre>code]:p-0
-
-                /* ── Images inside content ── */
-                [&>img]:my-8 [&>img]:rounded-sm [&>img]:shadow-lg [&>img]:w-full
-
-                /* ── Horizontal rule ── */
-                [&>hr]:my-10 [&>hr]:border-0 [&>hr]:h-px [&>hr]:bg-gradient-to-r
-                [&>hr]:from-transparent [&>hr]:via-burgundy-200 [&>hr]:to-transparent
-              "
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            />
+          <div className="container-x max-w-4xl py-14 md:py-20">
+            <div className="blog-content">
+              <div dangerouslySetInnerHTML={{ __html: post.content }} />
+            </div>
           </div>
         </div>
 
-        {/* ── 4. DIVIDER ── */}
+        {/* ══════════════════════════════════════════════
+            4. DIVIDER
+        ══════════════════════════════════════════════ */}
         <div className="bg-white">
-          <div className="container-x max-w-3xl">
+          <div className="container-x max-w-4xl">
             <div className="h-px bg-gradient-to-r from-transparent via-burgundy-200 to-transparent" />
           </div>
         </div>
 
-        {/* ── 5. AUTHOR + SHARE STRIP ── */}
+        {/* ══════════════════════════════════════════════
+            5. AUTHOR + SHARE STRIP
+        ══════════════════════════════════════════════ */}
         <div className="bg-white">
-          <div className="container-x max-w-3xl py-8">
+          <div className="container-x max-w-4xl py-8">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-burgundy-100 flex items-center justify-center">
+                <div className="w-11 h-11 rounded-full bg-burgundy-100 flex items-center justify-center">
                   <User className="w-5 h-5 text-burgundy-600" />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 uppercase tracking-wide">Written by</p>
+                  <p className="text-xs text-gray-400 uppercase tracking-wide">Written by</p>
                   <p className="font-semibold text-gray-900">{post.author}</p>
                 </div>
               </div>
@@ -290,34 +273,57 @@ export default function BlogPost() {
           </div>
         </div>
 
-        {/* ── 6. CTA SECTION ── */}
+        {/* ══════════════════════════════════════════════
+            6. CTA SECTION
+        ══════════════════════════════════════════════ */}
         <div className="bg-gradient-to-b from-white to-cream py-16">
-          <div className="container-x max-w-3xl">
-            <div className="relative overflow-hidden bg-burgundy-700 rounded-sm p-8 md:p-12 text-center shadow-burgundy">
-              {/* Decorative circles */}
-              <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-burgundy-600 opacity-40" />
-              <div className="absolute -bottom-10 -left-10 w-52 h-52 rounded-full bg-burgundy-800 opacity-30" />
-              <div className="relative">
-                <span className="inline-block text-gold-400 text-xs uppercase tracking-[0.3em] font-bold mb-3">
-                  Start Your Journey
-                </span>
-                <h3 className="font-display text-3xl md:text-4xl font-bold text-white mb-4 leading-tight">
-                  Ready to Begin Your
-                  <br className="hidden md:block" /> Hospitality Career?
-                </h3>
-                <p className="text-white/80 mb-8 max-w-xl mx-auto leading-relaxed">
-                  Join RIHM Dehradun — expert training, 97% placement record at Taj, Oberoi & ITC, and a pathway to
-                  global opportunities.
-                </p>
-                <div className="flex flex-wrap gap-3 justify-center">
-                  <Link to="/apply" className="btn-gold">
+          <div className="container-x max-w-4xl">
+            <div className="relative overflow-hidden bg-burgundy-700 rounded-sm p-8 md:p-12 shadow-burgundy">
+              {/* Decorative bg elements */}
+              <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-burgundy-600 opacity-50" />
+              <div className="absolute -bottom-14 -left-14 w-60 h-60 rounded-full bg-burgundy-800 opacity-40" />
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold-600 via-gold-400 to-gold-600" />
+
+              <div className="relative flex flex-col md:flex-row md:items-center gap-8">
+                {/* Left: text */}
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-3">
+                    <GraduationCap className="w-5 h-5 text-gold-400" />
+                    <span className="text-gold-400 text-xs uppercase tracking-[0.2em] font-bold">
+                      Admissions 2026 Open
+                    </span>
+                  </div>
+                  <h3 className="font-display text-2xl md:text-3xl font-bold text-white mb-3 leading-snug">
+                    Ready to Begin Your
+                    <br />
+                    Hospitality Career?
+                  </h3>
+                  <p className="text-white/75 text-sm leading-relaxed max-w-md">
+                    Join RIHM Dehradun — 97% placement at Taj, Oberoi & ITC, world-class training labs, and a pathway to
+                    global opportunities.
+                  </p>
+                  <div className="flex items-center gap-4 mt-4">
+                    <div className="flex items-center gap-1.5 text-xs text-white/60">
+                      <Award className="w-3.5 h-3.5 text-gold-400" />
+                      <span>26+ years legacy</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-xs text-white/60">
+                      <Award className="w-3.5 h-3.5 text-gold-400" />
+                      <span>7000+ alumni placed</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right: buttons */}
+                <div className="flex flex-col gap-3 flex-shrink-0">
+                  <Link to="/apply" className="btn-gold text-center whitespace-nowrap">
                     Apply for 2026 Batch
                   </Link>
                   <Link
                     to="/courses"
-                    className="inline-flex items-center justify-center gap-2 border-2 border-white/50 text-white hover:bg-white/10 font-medium px-6 py-3 rounded-sm transition-colors"
+                    className="inline-flex items-center justify-center gap-2 border-2 border-white/30 text-white hover:bg-white/10 font-medium px-6 py-3 rounded-sm transition-colors text-sm whitespace-nowrap"
                   >
-                    View Courses
+                    Explore Courses
                   </Link>
                 </div>
               </div>
@@ -325,14 +331,16 @@ export default function BlogPost() {
           </div>
         </div>
 
-        {/* ── 7. BACK LINK ── */}
+        {/* ══════════════════════════════════════════════
+            7. BACK LINK
+        ══════════════════════════════════════════════ */}
         <div className="bg-cream border-t border-burgundy-100">
-          <div className="container-x max-w-3xl py-6">
+          <div className="container-x max-w-4xl py-6">
             <Link
               to="/blog"
-              className="inline-flex items-center gap-2 text-burgundy-600 hover:text-burgundy-700 font-medium text-sm transition-colors"
+              className="inline-flex items-center gap-2 text-burgundy-600 hover:text-burgundy-700 font-medium text-sm transition-colors group"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
               Back to All Articles
             </Link>
           </div>
