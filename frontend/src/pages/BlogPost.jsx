@@ -1,4 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
+import parse from 'html-react-parser';
 import { useQuery } from '@tanstack/react-query';
 import SEO from '../lib/SEO';
 import api from '../lib/api';
@@ -138,7 +139,7 @@ export default function BlogPost() {
           <div className="relative h-1 bg-gradient-to-r from-gold-600 via-gold-400 to-gold-600" />
 
           {/* — content — */}
-          <div className="relative container-x max-w-5xl py-14 md:py-20">
+          <div className="relative container-x max-w-5xl pt-14 md:pt-20 md:pb-[170px]">
             {/* Back link */}
             <Link
               to="/blog"
@@ -204,80 +205,76 @@ export default function BlogPost() {
               </button>
             </div>
           </div>
-
-          {/* — bottom fade into white (where cover image sits) — */}
-          <div className="relative h-12 bg-gradient-to-b from-burgundy-800 to-white" />
         </header>
 
-        {/* ══════════════════════════════════════════════
+        <div className="p-4 rounded-md border border-burgundy-100 bg-white max-w-5xl container-x">
+          {/* ══════════════════════════════════════════════
             2. COVER IMAGE
         ══════════════════════════════════════════════ */}
-        {post.cover_image && (
-          <div className="bg-white">
-            <div className="container-x max-w-5xl -mt-6">
-              <div className="aspect-[16/7] overflow-hidden rounded-sm shadow-2xl ring-1 ring-black/5">
-                <img
-                  src={optimizedCover || post.cover_image}
-                  alt={post.title}
-                  className="w-full h-full object-cover"
-                  loading="eager"
-                />
+          {post.cover_image && (
+            <div className="bg-white">
+              <div className="container-x -mt-6">
+                <div className="aspect-[16/7] overflow-hidden rounded-sm shadow-2xl ring-1 ring-black/5">
+                  <img
+                    src={optimizedCover || post.cover_image}
+                    alt={post.title}
+                    className="w-full h-full object-cover"
+                    loading="eager"
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* ══════════════════════════════════════════════
+          {/* ══════════════════════════════════════════════
             3. ARTICLE BODY
         ══════════════════════════════════════════════ */}
-        <div className="bg-white">
-          <div className="container-x max-w-4xl py-14 md:py-20">
-            <div className="blog-content">
-              <div dangerouslySetInnerHTML={{ __html: post.content }} />
+          <div className="bg-white">
+            <div className="py-8 md:py-10">
+              <div className="blog-content">{parse(post.content || '')}</div>
             </div>
           </div>
-        </div>
 
-        {/* ══════════════════════════════════════════════
+          {/* ══════════════════════════════════════════════
             4. DIVIDER
         ══════════════════════════════════════════════ */}
-        <div className="bg-white">
-          <div className="container-x max-w-4xl">
-            <div className="h-px bg-gradient-to-r from-transparent via-burgundy-200 to-transparent" />
+          <div className="bg-white">
+            <div className="">
+              <div className="h-px bg-gradient-to-r from-transparent via-burgundy-200 to-transparent" />
+            </div>
           </div>
-        </div>
 
-        {/* ══════════════════════════════════════════════
+          {/* ══════════════════════════════════════════════
             5. AUTHOR + SHARE STRIP
         ══════════════════════════════════════════════ */}
-        <div className="bg-white">
-          <div className="container-x max-w-4xl py-8">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-full bg-burgundy-100 flex items-center justify-center">
-                  <User className="w-5 h-5 text-burgundy-600" />
+          <div className="bg-white">
+            <div className="py-8">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-full bg-burgundy-100 flex items-center justify-center">
+                    <User className="w-5 h-5 text-burgundy-600" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400 uppercase tracking-wide">Written by</p>
+                    <p className="font-semibold text-gray-900">{post.author}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs text-gray-400 uppercase tracking-wide">Written by</p>
-                  <p className="font-semibold text-gray-900">{post.author}</p>
-                </div>
+                <button
+                  onClick={handleShare}
+                  className="inline-flex items-center gap-2 px-4 py-2 border border-burgundy-200 text-burgundy-600 text-sm font-medium rounded-sm hover:bg-burgundy-50 transition-colors"
+                >
+                  <Share2 className="w-4 h-4" />
+                  Share this article
+                </button>
               </div>
-              <button
-                onClick={handleShare}
-                className="inline-flex items-center gap-2 px-4 py-2 border border-burgundy-200 text-burgundy-600 text-sm font-medium rounded-sm hover:bg-burgundy-50 transition-colors"
-              >
-                <Share2 className="w-4 h-4" />
-                Share this article
-              </button>
             </div>
           </div>
         </div>
-
         {/* ══════════════════════════════════════════════
             6. CTA SECTION
         ══════════════════════════════════════════════ */}
         <div className="bg-gradient-to-b from-white to-cream py-16">
-          <div className="container-x max-w-4xl">
+          <div className="container-x max-w-5xl">
             <div className="relative overflow-hidden bg-burgundy-700 rounded-sm p-8 md:p-12 shadow-burgundy">
               {/* Decorative bg elements */}
               <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-burgundy-600 opacity-50" />
@@ -335,7 +332,7 @@ export default function BlogPost() {
             7. BACK LINK
         ══════════════════════════════════════════════ */}
         <div className="bg-cream border-t border-burgundy-100">
-          <div className="container-x max-w-4xl py-6">
+          <div className="container-x max-w-5xl py-6">
             <Link
               to="/blog"
               className="inline-flex items-center gap-2 text-burgundy-600 hover:text-burgundy-700 font-medium text-sm transition-colors group"
