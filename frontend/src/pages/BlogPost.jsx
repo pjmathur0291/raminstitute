@@ -218,12 +218,13 @@ export default function BlogPost() {
             {post.cover_image && (
               <div className="bg-white">
                 <div className="">
-                  <div className="aspect-[16/7] overflow-hidden rounded-sm shadow-2xl ring-1 ring-black/5">
+                  <div className="aspect-[16/9] overflow-hidden rounded-sm shadow-2xl ring-1 ring-black/5">
                     <img
                       src={optimizedCover || post.cover_image}
                       alt={post.title}
                       className="w-full h-full object-cover"
                       loading="eager"
+                      style={{ borderRadius: '16px' }}
                     />
                   </div>
                 </div>
