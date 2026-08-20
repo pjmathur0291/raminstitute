@@ -207,65 +207,67 @@ export default function BlogPost() {
           </div>
         </header>
 
-        <div className="p-4 rounded-md border border-burgundy-100 bg-white max-w-5xl container-x">
-          {/* ══════════════════════════════════════════════
+        <div className="max-w-5xl container-x">
+          <div className="md:p-6 p-4 rounded-md border border-burgundy-100 bg-white  position-relative -m-[90px]">
+            {/* ══════════════════════════════════════════════
             2. COVER IMAGE
         ══════════════════════════════════════════════ */}
-          {post.cover_image && (
-            <div className="bg-white">
-              <div className="container-x -mt-6">
-                <div className="aspect-[16/7] overflow-hidden rounded-sm shadow-2xl ring-1 ring-black/5">
-                  <img
-                    src={optimizedCover || post.cover_image}
-                    alt={post.title}
-                    className="w-full h-full object-cover"
-                    loading="eager"
-                  />
+            {post.cover_image && (
+              <div className="bg-white">
+                <div className="">
+                  <div className="aspect-[16/7] overflow-hidden rounded-sm shadow-2xl ring-1 ring-black/5">
+                    <img
+                      src={optimizedCover || post.cover_image}
+                      alt={post.title}
+                      className="w-full h-full object-cover"
+                      loading="eager"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* ══════════════════════════════════════════════
+            {/* ══════════════════════════════════════════════
             3. ARTICLE BODY
         ══════════════════════════════════════════════ */}
-          <div className="bg-white">
-            <div className="py-8 md:py-10">
-              <div className="blog-content">{parse(post.content || '')}</div>
+            <div className="bg-white">
+              <div className="py-8 md:py-10">
+                <div className="blog-content">{parse(post.content || '')}</div>
+              </div>
             </div>
-          </div>
 
-          {/* ══════════════════════════════════════════════
+            {/* ══════════════════════════════════════════════
             4. DIVIDER
         ══════════════════════════════════════════════ */}
-          <div className="bg-white">
-            <div className="">
-              <div className="h-px bg-gradient-to-r from-transparent via-burgundy-200 to-transparent" />
+            <div className="bg-white">
+              <div className="">
+                <div className="h-px bg-gradient-to-r from-transparent via-burgundy-200 to-transparent" />
+              </div>
             </div>
-          </div>
 
-          {/* ══════════════════════════════════════════════
+            {/* ══════════════════════════════════════════════
             5. AUTHOR + SHARE STRIP
         ══════════════════════════════════════════════ */}
-          <div className="bg-white">
-            <div className="py-8">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-full bg-burgundy-100 flex items-center justify-center">
-                    <User className="w-5 h-5 text-burgundy-600" />
+            <div className="bg-white">
+              <div className="py-8">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-full bg-burgundy-100 flex items-center justify-center">
+                      <User className="w-5 h-5 text-burgundy-600" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-400 uppercase tracking-wide">Written by</p>
+                      <p className="font-semibold text-gray-900">{post.author}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs text-gray-400 uppercase tracking-wide">Written by</p>
-                    <p className="font-semibold text-gray-900">{post.author}</p>
-                  </div>
+                  <button
+                    onClick={handleShare}
+                    className="inline-flex items-center gap-2 px-4 py-2 border border-burgundy-200 text-burgundy-600 text-sm font-medium rounded-sm hover:bg-burgundy-50 transition-colors"
+                  >
+                    <Share2 className="w-4 h-4" />
+                    Share this article
+                  </button>
                 </div>
-                <button
-                  onClick={handleShare}
-                  className="inline-flex items-center gap-2 px-4 py-2 border border-burgundy-200 text-burgundy-600 text-sm font-medium rounded-sm hover:bg-burgundy-50 transition-colors"
-                >
-                  <Share2 className="w-4 h-4" />
-                  Share this article
-                </button>
               </div>
             </div>
           </div>
