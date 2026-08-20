@@ -208,7 +208,7 @@ export default function BlogPost() {
         </header>
 
         <div className="max-w-5xl container-x mb-[64px] md:mb-[96px]">
-          <div className="md:p-6 p-4 rounded-md border border-burgundy-100 bg-white  position-relative -m-[90px]">
+          <div className="md:p-6 p-4 rounded-md border border-burgundy-100 bg-white relative -m-[90px]">
             {/* ══════════════════════════════════════════════
             2. COVER IMAGE
         ══════════════════════════════════════════════ */}
