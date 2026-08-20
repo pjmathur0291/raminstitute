@@ -1585,7 +1585,7 @@ async def health():
 # ----------------------------------------------------------------------------
 from fastapi.responses import Response  # noqa: E402
 
-SITE_BASE = "https://ram.institute"
+SITE_BASE = "https://raminstitute.in"
 STATIC_URLS = [
     ("/", "1.0", "weekly"),
     ("/about", "0.8", "monthly"),

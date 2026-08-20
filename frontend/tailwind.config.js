@@ -19,7 +19,7 @@ module.exports = {
       },
       colors: {
         burgundy: {
-          50:  'hsl(345, 50%, 96%)',
+          50: 'hsl(345, 50%, 96%)',
           100: 'hsl(345, 45%, 90%)',
           200: 'hsl(345, 50%, 80%)',
           300: 'hsl(345, 55%, 65%)',
@@ -32,7 +32,7 @@ module.exports = {
           DEFAULT: 'hsl(345, 60%, 35%)',
         },
         gold: {
-          50:  'hsl(43, 80%, 96%)',
+          50: 'hsl(43, 80%, 96%)',
           100: 'hsl(43, 75%, 90%)',
           200: 'hsl(43, 75%, 80%)',
           300: 'hsl(43, 75%, 65%)',
@@ -80,5 +80,5 @@ module.exports = {
       }
     }
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
 };
