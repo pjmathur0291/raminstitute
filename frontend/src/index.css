@@ -110,6 +110,10 @@ html {
   }
 }
 
+.blog-content table {
+  width: 100% !important;
+}
+
 .blog-content > * + * {
   margin-top: 1.5rem;
 }
