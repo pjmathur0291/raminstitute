@@ -2637,6 +2637,26 @@
   resolved "https://registry.npmjs.org/@tiptap/extension-strike/-/extension-strike-3.30.2.tgz"
   integrity sha512-fBLxMXz6hYIURzLOD+/L6aVATztsKham00ANWmGi13vN0hx2lQMYZffN+gR+QqiCDfMQxBXzrf5a7tJuDiQHLQ==
 
+"@tiptap/extension-table-cell@^3.30.2":
+  version "3.30.2"
+  resolved "https://registry.npmjs.org/@tiptap/extension-table-cell/-/extension-table-cell-3.30.2.tgz"
+  integrity sha512-fcFG6MsJV+x1ua27dJqIdpOa5wiTXaLSfXfZ0G+rhwchH8EtSM3Q64gT4KeHsa/vVt7pOEc6ChQhKMnm40fWdA==
+
+"@tiptap/extension-table-header@^3.30.2":
+  version "3.30.2"
+  resolved "https://registry.npmjs.org/@tiptap/extension-table-header/-/extension-table-header-3.30.2.tgz"
+  integrity sha512-qcpMr8x1XvevEG5QZdk4JGLzsjZal1zzNfy4xmEtwUYVYkXkWaXklQvxEXC6GUkVpTGTOSXtHl25/cSbnJ5qbg==
+
+"@tiptap/extension-table-row@^3.30.2":
+  version "3.30.2"
+  resolved "https://registry.npmjs.org/@tiptap/extension-table-row/-/extension-table-row-3.30.2.tgz"
+  integrity sha512-dlbkcmgb5eiMI9hLX5C6CaPGuGcpyyPxJCjIYcI1l4glimYcbgxxEeqtGIvySgDewxWgofY/V3CLOGHrfyBCkQ==
+
+"@tiptap/extension-table@^3.30.2":
+  version "3.30.2"
+  resolved "https://registry.npmjs.org/@tiptap/extension-table/-/extension-table-3.30.2.tgz"
+  integrity sha512-zWp0ehZnx6N5lwRa8anSTn17GBEF3wxHXfOJGbBugf4Vwmp5keUEAXrgeIS4j7gIdxjN3XawdwjuMImG93N+Fg==
+
 "@tiptap/extension-text-align@^3.30.2":
   version "3.30.2"
   resolved "https://registry.npmjs.org/@tiptap/extension-text-align/-/extension-text-align-3.30.2.tgz"

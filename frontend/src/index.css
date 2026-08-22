@@ -327,6 +327,53 @@ html {
   font-size: inherit;
 }
 
+/* ── Tables ── */
+.blog-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.75rem 0;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  overflow-x: auto;
+  display: block;
+}
+
+@media (min-width: 640px) {
+  .blog-content table {
+    display: table;
+  }
+}
+
+.blog-content thead {
+  background-color: hsl(345, 65%, 28%);
+  color: #fff;
+}
+
+.blog-content th {
+  padding: 0.65rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.875rem;
+  letter-spacing: 0.02em;
+  border: 1px solid hsl(345, 55%, 22%);
+  white-space: nowrap;
+}
+
+.blog-content td {
+  padding: 0.6rem 1rem;
+  border: 1px solid hsl(345, 20%, 85%);
+  vertical-align: top;
+  color: #222;
+}
+
+.blog-content tbody tr:nth-child(even) {
+  background-color: hsl(345, 50%, 97%);
+}
+
+.blog-content tbody tr:hover {
+  background-color: hsl(43, 80%, 96%);
+}
+
 /* ── Images inside content ── */
 .blog-content img {
   max-width: 100%;
@@ -449,6 +496,63 @@ html {
   background-color: hsl(43, 74%, 85%);
   padding: 0.125rem;
   border-radius: 0.125rem;
+}
+
+/* ── Editor: Table styles (ProseMirror) ── */
+.ProseMirror table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
+  margin: 1rem 0;
+  overflow: hidden;
+}
+
+.ProseMirror td,
+.ProseMirror th {
+  min-width: 1em;
+  border: 2px solid hsl(345, 20%, 85%);
+  padding: 0.5rem 0.75rem;
+  vertical-align: top;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.ProseMirror th {
+  font-weight: 600;
+  background-color: hsl(345, 65%, 28%);
+  color: #fff;
+  text-align: left;
+}
+
+.ProseMirror .selectedCell::after {
+  z-index: 2;
+  position: absolute;
+  content: '';
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: hsla(43, 74%, 50%, 0.25);
+  pointer-events: none;
+}
+
+.ProseMirror .column-resize-handle {
+  position: absolute;
+  right: -2px;
+  top: 0;
+  bottom: -2px;
+  width: 4px;
+  background-color: hsl(43, 74%, 50%);
+  pointer-events: none;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.resize-cursor {
+  cursor: col-resize;
 }
 
 .ProseMirror p.is-editor-empty:first-child::before {
