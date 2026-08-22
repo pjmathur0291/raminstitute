@@ -165,6 +165,7 @@ export default function BlogPage() {
                     alt={featured.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     loading="eager"
+                    style={{ objectPosition: 'center left' }}
                   />
                 )}
               </div>
@@ -206,6 +207,7 @@ export default function BlogPage() {
                       alt={p.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                       loading="lazy"
+                      style={{ objectPosition: 'center left' }}
                     />
                   </div>
                 )}
